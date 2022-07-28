@@ -33,7 +33,7 @@ return {
 		sadTime = false
 		healthBarColorEnemy = {healthBarColours[song][1],healthBarColours[song][2],healthBarColours[song][3]}
 		boyfriendIcon:animate("boyfriend", false)
-
+		
 		if song == 3 then
 			inst = love.audio.newSource("songs/ending/dadbattle/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/dadbattle/Voices.ogg", "stream")
