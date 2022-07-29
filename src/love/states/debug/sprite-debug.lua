@@ -55,6 +55,7 @@ return {
 			},
 			{2}
 		}
+		love.keyboard.setKeyRepeat(true)
 
 		graphics.setFade(0)
 		graphics.fadeIn(0.5)

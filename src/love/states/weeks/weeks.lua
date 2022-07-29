@@ -105,8 +105,10 @@ return {
 			vol = 0
 		}
 
-		girlfriend = love.filesystem.load("sprites/girlfriend.lua")()
-		boyfriend = love.filesystem.load("sprites/boyfriend.lua")()
+		girlfriend = love.filesystem.load("sprites/characters/girlfriend.lua")()
+		boyfriend = love.filesystem.load("sprites/characters/boyfriend.lua")()
+		boyfriendSad = love.filesystem.load("sprites/characters/boyfriendSad.lua")()
+		boyfriendHappy = love.filesystem.load("sprites/characters/boyfriendHappyThoughts.lua")()
 
 		rating = love.filesystem.load("sprites/rating.lua")()
 
@@ -160,7 +162,7 @@ return {
 		end
 		useAltAnims = false
 
-		cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 75
+		cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 150
 
 		rating.x = girlfriend.x
 		if not pixel then
@@ -177,7 +179,11 @@ return {
 		combo = 0
 
 		enemy:animate("idle")
+		enemy2:animate("idle")
+		enemy3:animate("idle")
 		boyfriend:animate("idle")
+		boyfriendSad:animate("idle")
+		boyfriendHappy:animate("idle")
 
 		graphics.fadeIn(0.5)
 	end,
@@ -1059,10 +1065,34 @@ return {
 					if camTimer then
 						Timer.cancel(camTimer)
 					end
-					if events[i].mustHitSection then
-						camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 75}, "out-quad")
+					if song == 1 then
+						if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+							if events[i].mustHitSection then
+								camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
+							else
+								camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+							end
+						end
+						if sadTime then
+							if events[i].mustHitSection then
+								camTimer = Timer.tween(1.25, cam, {x = -boyfriendSad.x + 100, y = -boyfriendSad.y + 150}, "out-quad")
+							else
+								camTimer = Timer.tween(1.25, cam, {x = -enemy2.x - 100, y = -enemy2.y + 75}, "out-quad")
+							end
+						end
+						if notebookTime then
+							if events[i].mustHitSection then
+								camTimer = Timer.tween(1.25, cam, {x = -boyfriendHappy.x + 100, y = -boyfriendHappy.y + 150}, "out-quad")
+							else
+								camTimer = Timer.tween(1.25, cam, {x = -enemy3.x - 100, y = -enemy3.y + 75}, "out-quad")
+							end
+						end
 					else
-						camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+						if events[i].mustHitSection then
+							camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
+						else
+							camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+						end
 					end
 
 					if events[i].altAnim then
@@ -1085,7 +1115,11 @@ return {
 
 			girlfriend:update(dt)
 			enemy:update(dt)
+			enemy2:update(dt)
+			enemy3:update(dt)
 			boyfriend:update(dt)
+			boyfriendSad:update(dt)
+			boyfriendHappy:update(dt)
 			leftArrowSplash:update(dt)
 			rightArrowSplash:update(dt)
 			upArrowSplash:update(dt)
@@ -1093,15 +1127,23 @@ return {
 
 			if musicThres ~= oldMusicThres and math.fmod(absMusicTime, 120000 / bpm) < 100 then
 				if spriteTimers[1] == 0 then
-					girlfriend:animate("idle", false)
+					if sadTime then
+						girlfriend:animate("glitch", false)
+					else
+						girlfriend:animate("idle", false)
+					end
 	
 					girlfriend:setAnimSpeed(14.4 / (60 / bpm))
 				end
 				if spriteTimers[2] == 0 then
 					self:safeAnimate(enemy, "idle", false, 2)
+					self:safeAnimate(enemy2, "idle", false, 2)
+					self:safeAnimate(enemy3, "idle", false, 2)
 				end
 				if spriteTimers[3] == 0 then
 					self:safeAnimate(boyfriend, "idle", false, 3)
+					self:safeAnimate(boyfriendSad, "idle", false, 3)
+					self:safeAnimate(boyfriendHappy, "idle", false, 3)
 				end
 			end
 
@@ -1164,14 +1206,21 @@ return {
 							if enemyNote[1]:getAnimName() == "hold" or enemyNote[1]:getAnimName() == "end" then
 								if useAltAnims then
 									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim .. " alt", true, 2) end
+									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim .. " alt", true, 2) end
+									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim .. " alt", true, 2) end
 								else
-									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim, true, 2) end
+									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim, true, 2) end
+									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim, true, 2) end
 								end
 							else
 								if useAltAnims then
 									self:safeAnimate(enemy, curAnim .. " alt", false, 2)
+									self:safeAnimate(enemy2, curAnim .. " alt", false, 2)
+									self:safeAnimate(enemy3, curAnim .. " alt", false, 2)
 								else
 									self:safeAnimate(enemy, curAnim, false, 2)
+									self:safeAnimate(enemy2, curAnim, false, 2)
+									self:safeAnimate(enemy3, curAnim, false, 2)
 								end
 							end
 
@@ -1326,6 +1375,8 @@ return {
 												goofyBoyfriendArrow:animate("confirm", true)
 
 												self:safeAnimate(boyfriend, curAnim, false, 3)
+												self:safeAnimate(boyfriendSad, curAnim, false, 3)
+												self:safeAnimate(boyfriendHappy, curAnim, false, 3)
 												doingAnim = false
 
 												health = health + 1
@@ -1353,6 +1404,8 @@ return {
 										if girlfriend:isAnimName("sad") then if combo >= 5 then self:safeAnimate(girlfriend, "sad", true, 1) end end
 
 										self:safeAnimate(boyfriend, "miss " .. curAnim, false, 3)
+										self:safeAnimate(boyfriendSad, "miss " .. curAnim, false, 3)
+										self:safeAnimate(boyfriendHappy, "miss " .. curAnim, false, 3)
 
 										hitSick = false
 
@@ -1380,7 +1433,7 @@ return {
 							boyfriendArrow:animate("confirm", false)
 							goofyBoyfriendArrow:animate("confirm", true)
 
-							if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 3) end
+							if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 3); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3) end
 
 							health = health + 1
 						end
@@ -1397,9 +1450,11 @@ return {
 							goofyBoyfriendArrow:animate("confirm", true)
 
 							if boyfriendNote[1]:getAnimName() == "hold" or boyfriendNote[1]:getAnimName() == "end" then
-								if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 2) end
+								if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 2); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3) end
 							else
 								self:safeAnimate(boyfriend, curAnim, false, 2)
+								self:safeAnimate(boyfriendSad, curAnim, false, 2)
+								self:safeAnimate(boyfriendHappy, curAnim, false, 2)
 							end
 
 							table.remove(boyfriendNote, 1)

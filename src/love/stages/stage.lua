@@ -9,11 +9,7 @@ return {
         stageImages[2].y = 400
         stageImages[3].y = -100
 
-        enemy = love.filesystem.load("sprites/week1/daddy-dearest.lua")()
-
-        girlfriend.x, girlfriend.y = 30, -90
-        enemy.x, enemy.y = -380, -110
-        boyfriend.x, boyfriend.y = 260, 100
+        
     end,
 
     load = function()
@@ -21,7 +17,6 @@ return {
     end,
 
     update = function(self, dt)
-
     end,
 
     draw = function()
@@ -31,13 +26,25 @@ return {
 			stageImages[1]:draw()
 			stageImages[2]:draw()
 
-			girlfriend:draw()
+            if not notebookTime then
+			    girlfriend:draw()
+            end
 		love.graphics.pop()
 		love.graphics.push()
 			love.graphics.translate(cam.x, cam.y)
 
-			enemy:draw()
-			boyfriend:draw()
+            if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+                enemy:draw()
+                boyfriend:draw()
+            end
+            if sadTime then
+                enemy2:draw()
+                boyfriendSad:draw()
+            end
+            if notebookTime then
+                enemy3:draw()
+                boyfriendHappy:draw()
+            end
 		love.graphics.pop()
 		love.graphics.push()
 			love.graphics.translate(cam.x * 1.1, cam.y * 1.1)
