@@ -38,10 +38,14 @@ return graphics.newSprite(
 	},
 
     {
-        ["down"] = {start = 5, stop = 8, speed = 20, offsetX = 0, offsetY = 0},
-        ["up"] = {start = 13, stop = 16, speed = 20, offsetX = 0, offsetY = 0},
-        ["left"] = {start = 21, stop = 24, speed = 20, offsetX = 0, offsetY = 0},
-        ["right"] = {start = 29, stop = 32, speed = 20, offsetX = 0, offsetY = 0},
+        ["down 1"] = {start = 5, stop = 8, speed = 20, offsetX = 0, offsetY = 0},
+        ["up 1"] = {start = 13, stop = 16, speed = 20, offsetX = 0, offsetY = 0},
+        ["left 1"] = {start = 21, stop = 24, speed = 20, offsetX = 0, offsetY = 0},
+        ["right 1"] = {start = 29, stop = 32, speed = 20, offsetX = 0, offsetY = 0},
+		["down 2"] = {start = 1, stop = 4, speed = 20, offsetX = 0, offsetY = 0},
+        ["up 2"] = {start = 9, stop = 12, speed = 20, offsetX = 0, offsetY = 0},
+        ["left 2"] = {start = 17, stop = 20, speed = 20, offsetX = 0, offsetY = 0},
+        ["right 2"] = {start = 25, stop = 28, speed = 20, offsetX = 0, offsetY = 0},
         ["none"] = {start = 33, stop = 33, speed = 20, offsetX = 0, offsetY = 0}
     },
     "none",

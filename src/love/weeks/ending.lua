@@ -9,12 +9,18 @@ return {
 			["BGSketch"] = 0
 		}
 
-		song = 1
+		song = 2
 
-		enemy = love.filesystem.load("sprites/characters/sayori.lua")()
-		enemy2 = love.filesystem.load("sprites/characters/sayoriSad.lua")()
-		enemy3 = love.filesystem.load("sprites/characters/sayoriHappyThoughts.lua")()
-
+		if song == 1 then
+			enemy = love.filesystem.load("sprites/characters/sayori.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/sayoriSad.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/sayoriHappyThoughts.lua")()
+		elseif song == 2 then
+			enemy = love.filesystem.load("sprites/characters/yuri.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
+			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
+		end
 		girlfriend.x, girlfriend.y = 30, 210
 		enemy.x, enemy.y = -380, 270
 		enemy2.x, enemy2.y = -380, 380
@@ -84,7 +90,27 @@ return {
 
 		-------------------
 
+		function camZoom(time, int)
+			local time = time or 0.5
+			local int = int or 0.03
+			if not camTween then
+				camTween = Timer.tween(
+					time,
+					cam,
+					{
+						sizeX = cam.sizeX + int,
+						sizeY = cam.sizeY + int
+					},
+					"out-quad",
+					function()
+						camTween = nil
+					end
+				)
+			end
+		end
 		function sadTimeFunc() 
+			weeks:safeAnimate(girlfriend, "glitch", false, 3)
+			camZoom(0.65, 0.15, true)
 			sadTime = true
 			notebookTime = false
 			girlfriend.x, girlfriend.y = 30, 230
@@ -102,6 +128,9 @@ return {
 			healthBarColorPlayer = {82, 115, 145}
 		end
 		function notebookTimeFunc()
+			weeks:safeAnimate(girlfriend, "idle", false, 3)
+			girlfriend.x, girlfriend.y = boyfriend.x - 200, boyfriend.y
+			cam.sizeX, cam.sizeY = 0.95, 0.95
 			sadTime = false
 			notebookTime = true
 			if enemyIcon:getAnimName() == enemyNames[song] .. " sad" or enemyIcon:getAnimName() == enemyNames[song] then
@@ -118,6 +147,8 @@ return {
 			healthBarColorPlayer = {255, 225, 225}
 		end
 		function exitSpecial()
+			weeks:safeAnimate(girlfriend, "idle", false, 3)
+			cam.sizeX, cam.sizeY = 0.95, 0.95
 			sadTime = false
 			notebookTime = false
 			girlfriend.x, girlfriend.y = 30, 140
@@ -134,6 +165,7 @@ return {
 			healthBarColorEnemy = {healthBarColours[song][1],healthBarColours[song][2],healthBarColours[song][3]}
 			healthBarColorPlayer = {49,176,209}
 		end
+	
 
 		self:load()
 	end,
@@ -153,6 +185,7 @@ return {
 		elseif song == 2 then
 			inst = love.audio.newSource("songs/ending/markov/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/markov/Voices.ogg", "stream")
+			transparent["enemy"] = 0
 		else
 			inst = love.audio.newSource("songs/ending/stagnant/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/stagnant/Voices.ogg", "stream")
@@ -191,11 +224,50 @@ return {
 			-- Stagnant
 			if musicTime >= 108333 and musicTime <= 108383 then -- poem transitions
 				poemTransitionSwirl:animate("anim", false)
-			elseif musicTime >= 193666 and musicTime <= 193716 then
+			elseif musicTime >= 193666 and musicTime <= 193516 then
 				poemTransitionSwirl:animate("anim", false)
-			elseif musicTime >= 221333 and musicTime <= 221383 then
+			elseif musicTime >= 221000 and musicTime <= 221000+50 then
 				poemTransitionSwirl:animate("anim", false)
 				finalTransition = true
+			end
+			if musicTime >= 87999 and musicTime <= 87999+50 then -- cam zooms
+				camZoom(0.35, 0.25)
+			elseif musicTime >= 154444 and musicTime <= 154444+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 154666 and musicTime <= 154666+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 156000 and musicTime <= 156000+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 156500 and musicTime <= 156500+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 158666 and musicTime <= 158666+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 161333 and musicTime <= 161333+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 162666 and musicTime <= 162666+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 164000 and musicTime <= 164000+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 165333 and musicTime <= 165333+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 166000 and musicTime <= 166000+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 166666 and musicTime <= 166666+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 167166 and musicTime <= 167166+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 169333 and musicTime <= 169333+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 172000 and musicTime <= 172000+50 then
+				camZoom(0.03, 0.01)
+			elseif musicTime >= 173333 and musicTime <= 173333+50 then
+				camZoom(1, 0.05)
+			elseif musicTime >= 178666 and musicTime <= 178666+50 then
+				camZoom(1, 0.05)
+			elseif musicTime >= 184000 and musicTime <= 184000+50 then
+				camZoom(1, 0.05)
+			elseif musicTime >= 189333 and musicTime <= 189333+50 then
+				camZoom(1, 0.05)
 			end
 			if musicTime <= 87999 or musicTime >= 110000 or musicTime <= 189333 and musicTime >= 194666 then
 				transparent["BGSketch"] = 0
@@ -324,18 +396,43 @@ return {
 			love.graphics.push()
 				love.graphics.translate(cam.x, cam.y)
 				love.graphics.scale(0.75, 0.75)
-				if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
-					enemy:draw()
-					boyfriend:draw()
+				-- Stagnant
+				if song == 1 then
+					if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+						enemy:draw()
+						boyfriend:draw()
+					end
+					if sadTime then
+						enemy2:draw()
+						boyfriendSad:draw()
+					end
+					if notebookTime then
+						enemy3:draw()
+						boyfriendHappy:draw()
+					end
+				
+				-- Markov
+				elseif song == 2 then
+					if musicTime <= 44486 then
+						enemy3:draw()
+						dontDrawBF = true
+					end
+					if (musicTime >= 44589 and musicTime <= 46027) or (musicTime >= 85927 and musicTime <= 125227) then
+						enemy2:draw()
+						dontDrawBF = true
+					end
+					if (musicTime >= 46027 and musicTime <= 85927) then
+						enemy:draw()
+						dontDrawBF = false
+					end
+					if not dontDrawBF then
+						boyfriendSad:draw()
+					end
+				-- Home
+				elseif song == 3 then
+
 				end
-				if sadTime then
-					enemy2:draw()
-					boyfriendSad:draw()
-				end
-				if notebookTime then
-					enemy3:draw()
-					boyfriendHappy:draw()
-				end
+
 			love.graphics.pop()
 			love.graphics.push()
 				love.graphics.translate(cam.x * 1.1, cam.y * 1.1)

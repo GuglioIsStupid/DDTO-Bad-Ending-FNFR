@@ -181,6 +181,7 @@ return {
 		enemy:animate("idle")
 		enemy2:animate("idle")
 		enemy3:animate("idle")
+		if enemy4 then enemy4:animate("idle") end
 		boyfriend:animate("idle")
 		boyfriendSad:animate("idle")
 		boyfriendHappy:animate("idle")
@@ -1107,16 +1108,11 @@ return {
 				end
 			end
 
-			if musicThres ~= oldMusicThres and math.fmod(absMusicTime, 240000 / bpm) < 100 then
-				if camScaleTimer then Timer.cancel(camScaleTimer) end
-
-				camScaleTimer = Timer.tween((60 / bpm) / 16, cam, {sizeX = camScale.x * 1.05, sizeY = camScale.y * 1.05}, "out-quad", function() camScaleTimer = Timer.tween((60 / bpm), cam, {sizeX = camScale.x, sizeY = camScale.y}, "out-quad") end)
-			end
-
 			girlfriend:update(dt)
 			enemy:update(dt)
 			enemy2:update(dt)
 			enemy3:update(dt)
+			if enemy4 then enemy4:update(dt) end
 			boyfriend:update(dt)
 			boyfriendSad:update(dt)
 			boyfriendHappy:update(dt)
@@ -1139,6 +1135,7 @@ return {
 					self:safeAnimate(enemy, "idle", false, 2)
 					self:safeAnimate(enemy2, "idle", false, 2)
 					self:safeAnimate(enemy3, "idle", false, 2)
+					if enemy4 then self:safeAnimate(enemy4, "idle", false, 2) end
 				end
 				if spriteTimers[3] == 0 then
 					self:safeAnimate(boyfriend, "idle", false, 3)
@@ -1208,19 +1205,28 @@ return {
 									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim .. " alt", true, 2) end
 									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim .. " alt", true, 2) end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim .. " alt", true, 2) end
+									if enemy4 then
+										if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim .. " alt", true, 2) end
+									end
 								else
+									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim, true, 2) end
 									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim, true, 2) end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim, true, 2) end
+									if enemy4 then
+										if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim, true, 2) end
+									end
 								end
 							else
 								if useAltAnims then
 									self:safeAnimate(enemy, curAnim .. " alt", false, 2)
 									self:safeAnimate(enemy2, curAnim .. " alt", false, 2)
 									self:safeAnimate(enemy3, curAnim .. " alt", false, 2)
+									if enemy4 then self:safeAnimate(enemy4, curAnim .. " alt", false, 2) end
 								else
 									self:safeAnimate(enemy, curAnim, false, 2)
 									self:safeAnimate(enemy2, curAnim, false, 2)
 									self:safeAnimate(enemy3, curAnim, false, 2)
+									if enemy4 then self:safeAnimate(enemy4, curAnim, false, 2) end
 								end
 							end
 
@@ -1588,36 +1594,36 @@ return {
 				if hitSick then
 					if not settings.botPlay then
 						if input:pressed("gameLeft") then
-							leftArrowSplash:animate("left")
+							leftArrowSplash:animate("left " .. love.math.random(1,2))
 						elseif input:pressed("gameRight") then
-							rightArrowSplash:animate("right")
+							rightArrowSplash:animate("right " .. love.math.random(1,2))
 						elseif input:pressed("gameUp") then
-							upArrowSplash:animate("up")
+							upArrowSplash:animate("up " .. love.math.random(1,2))
 						elseif input:pressed("gameDown") then
-							downArrowSplash:animate("down")
+							downArrowSplash:animate("down " .. love.math.random(1,2))
 						end
 					else
 						if boyfriendArrows[1]:getAnimName() == "confirm" then
 							if wasReleased1 then
-								leftArrowSplash:animate("left")
+								leftArrowSplash:animate("left " .. love.math.random(1,2))
 								wasReleased1 = false
 							end
 						end
 						if boyfriendArrows[2]:getAnimName() == "confirm" then
 							if wasReleased2 then
-								downArrowSplash:animate("down")
+								downArrowSplash:animate("down " .. love.math.random(1,2))
 								wasReleased2 = false
 							end
 						end
 						if boyfriendArrows[3]:getAnimName() == "confirm" then
 							if wasReleased3 then
-								upArrowSplash:animate("up")
+								upArrowSplash:animate("up " .. love.math.random(1,2))
 								wasReleased3 = false
 							end
 						end
 						if boyfriendArrows[4]:getAnimName() == "confirm" then
 							if wasReleased4 then
-								rightArrowSplash:animate("right")
+								rightArrowSplash:animate("right " .. love.math.random(1,2))
 								wasReleased4 = false
 							end
 						end
@@ -1639,6 +1645,7 @@ return {
 				end
 				
 				if not paused then
+					graphics.setColor(1,1,1,0.5)
 					if not pixel then
 						if leftArrowSplash:isAnimated() then
 							leftArrowSplash:draw()
@@ -1666,6 +1673,7 @@ return {
 							downArrowSplash:udraw()
 						end
 					end
+					graphics.setColor(1,1,1,1)
 				end
 				
 
