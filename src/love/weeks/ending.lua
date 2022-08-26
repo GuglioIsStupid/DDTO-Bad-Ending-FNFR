@@ -9,7 +9,7 @@ return {
 			["BGSketch"] = 0
 		}
 
-		song = 2
+		song = 1
 
 		if song == 1 then
 			enemy = love.filesystem.load("sprites/characters/sayori.lua")()
@@ -20,6 +20,8 @@ return {
 			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
 			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
 			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
+		elseif song == 3 then
+
 		end
 		girlfriend.x, girlfriend.y = 30, 210
 		enemy.x, enemy.y = -380, 270

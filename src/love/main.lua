@@ -445,6 +445,7 @@ function love.draw()
 			love.graphics.print(status.getDebugStr(settings.showDebug), 5, 5, nil, 1.8, 1.8)
 		end
 	end
+
 end
 function love.quit()
 	if useDiscordRPC then

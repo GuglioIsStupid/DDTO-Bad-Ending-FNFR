@@ -23,11 +23,18 @@ local menuState
 
 local menuNum = 1
 
+local doingBPS, beatEverySecond, doNotRepeat
+
 local songNum, songAppend
 local songDifficulty = 2
+local introFont
 
 local selectSound = love.audio.newSource("sounds/menu/select.ogg", "static")
 local confirmSound = love.audio.newSource("sounds/menu/confirm.ogg", "static")
+
+local _introText, _introTextRaw, leFade, didTimers
+
+local bg
 
 music = love.audio.newSource("songs/misc/menu.ogg", "stream")
 
@@ -43,20 +50,31 @@ music:setLooping(true)
 
 return {
 	enter = function(self, previous)
+		leFade = {
+			0
+		}
+		didTimers = {
+			false,
+			false,
+			false,
+			false,
+			false,
+			false
+		}
 
-		function tweenMenu()
-			if logo.y == -300 then 
-				Timer.tween(1, logo, {y = -125}, "out-expo")
-			end
-			if titleEnter.y == 450 then 
-				Timer.tween(1, titleEnter, {y = 350}, "out-expo")
-			end
-			if girlfriendTitle.x == 500 then
-				Timer.tween(1, girlfriendTitle, {x = 400}, "out-expo")
-			end
-		end
+		bg = graphics.newImage(love.graphics.newImage(graphics.imagePath("menu/scrolling_bg")))
+		bg.sizeX, bg.sizeY = 2.2,2.2
+
+		doingBPS = false
+
+		_introTextRaw = require "data.introText"
+		_introText = _introTextRaw[love.math.random(1,#_introTextRaw)]
+		doNotRepeat = false
+		if not _introText[2] then _introText[2] = "" end
+		if not _introText[3] then _introText[3] = "" end
 
 		function logoRotate()
+			doNotRepeat = true
 			Timer.tween(2, logo, {orientation = 0.15}, "in-out-back", function()
 				Timer.tween(2, logo, {orientation = -0.15}, "in-out-back", function()
 					logoRotate()
@@ -64,6 +82,19 @@ return {
 			end)
 		end
 		menuBPM = 102
+		curBeat = 1
+		curStep = 1
+		introFont = love.graphics.newFont("fonts/introFont.ttf", 64)
+		function beatEverySecond()
+			doingBPS = true
+			Timer.after(
+				1,
+				function()
+					curBeat = curBeat + 1
+					beatEverySecond()
+				end
+			)
+		end
 		changingMenu = false
 		logo = love.filesystem.load("sprites/menu/ve-logo.lua")()
 		girlfriendTitle = love.filesystem.load("sprites/menu/girlfriend-title.lua")()
@@ -78,10 +109,10 @@ return {
 
 		girlfriendTitle.x, girlfriendTitle.y = 500, 65
 		titleEnter.x, titleEnter.y = 225, 450
-		logo.x, logo.y = -350, -300
 
-		logoRotate()
-		tweenMenu()
+		__doingIntro = true
+		--logoRotate()
+		--tweenMenu()
 
 		girlfriendTitle.x, girlfriendTitle.y = 325, 65
 
@@ -122,7 +153,12 @@ return {
 		titleEnter:update(dt)
 		logo:update(dt)
 
+		curStep = math.floor(curBeat / 4)
+
 		if not graphics.isFading() then
+			if not doingBPS then
+				beatEverySecond()
+			end
 			if input:pressed("confirm") then
 				
 				if not changingMenu then
@@ -155,29 +191,78 @@ return {
 			love.graphics.push()
 				love.graphics.scale(cam.sizeX, cam.sizeY)
 
-				logo:draw()
+				if not __doingIntro then
+					love.graphics.setColor(1,1,1,leFade[1])
+					love.graphics.translate(-math.abs(graphics.getWidth()/2), -math.abs(graphics.getHeight()/2))
+					bg:draw()
+					love.graphics.translate(graphics.getWidth()/2, graphics.getHeight()/2)
+					logo:draw()
 
-				girlfriendTitle:draw()
-				titleEnter:draw()
-
-				--love.graphics.setColor(1, 63 / 255, 172 / 255, 0.9)
-				love.graphics.setColor(0, 0, 0, 0.9)
-				for i = 1, 15 do
-					whiteRectangles[i]:draw()
+					--love.graphics.setColor(1, 63 / 255, 172 / 255, 0.9)
+					love.graphics.setColor(0, 0, 0, 0.9)
+					for i = 1, 15 do
+						whiteRectangles[i]:draw()
+					end
+					love.graphics.setColor(1, 1, 1)
+				else
+					love.graphics.setFont(introFont)
+					if curBeat == 3 or curBeat == 4 then
+						love.graphics.printf("MOD BY\nTEAM TBD\n\nPORTED BY\nGUGLIOISSTUPID",-320,-225, 700, "center")
+					elseif curBeat == 6 or curBeat == 7 then
+						love.graphics.printf(
+							_introText[1],
+							-320,-210, 700, "center"
+						)
+						if didTimers[2] then
+							love.graphics.printf("\n".._introText[2],-320,-210, 700, "center")
+						end
+						if didTimers[3] then 
+							love.graphics.printf("\n\n".._introText[3],-320,-210, 700, "center")
+						end
+						if not didTimers[1] then
+							didTimers[1] = true
+							Timer.after(
+								0.85,
+								function()
+									didTimers[2] = true
+									Timer.after(
+										0.85,
+										function()
+											didTimers[3] = true
+										end
+									)
+								end
+							)
+						end
+					elseif curBeat == 9 or curBeat == 10 then
+						love.graphics.printf("DDTO",-320,-210, 700, "center")
+						if didTimers[5] then
+							love.graphics.printf("\nBAD",-320,-210, 700, "center")
+						end
+						if didTimers[6] then
+							love.graphics.printf("\n\nENDING",-320,-210, 700, "center")
+						end
+						if not didTimers[4] then
+							didTimers[4] = true
+							Timer.after(
+								0.85,
+								function()
+									didTimers[5] = true
+									Timer.after(
+										0.85,
+										function()
+											didTimers[6] = true
+										end
+									)
+								end
+							)
+						end
+					elseif curBeat == 12 and __doingIntro then
+						__doingIntro = false
+						Timer.tween(3, leFade, {[1] = 1}, "out-quad")
+					end
+					love.graphics.setFont(font)
 				end
-				love.graphics.setColor(1, 1, 1)
-
-				love.graphics.printf(
-					"This is a pre-release build.\n\n"..
-					"Please report any bugs you find.",
-					-525,
-					90,
-					1200,
-					"left",
-					nil,
-					1.6,
-					1.6
-				)
 
 			love.graphics.pop()
 		love.graphics.pop()
