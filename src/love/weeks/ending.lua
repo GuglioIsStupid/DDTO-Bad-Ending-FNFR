@@ -23,6 +23,7 @@ return {
 		elseif song == 3 then
 
 		end
+	
 		girlfriend.x, girlfriend.y = 30, 210
 		enemy.x, enemy.y = -380, 270
 		enemy2.x, enemy2.y = -380, 380

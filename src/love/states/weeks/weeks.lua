@@ -93,12 +93,14 @@ return {
 			notes = love.graphics.newImage(graphics.imagePath(noteskins[settings.noteSkins])),
 			goofyNotes = love.graphics.newImage(graphics.imagePath("goofyArrows")),
 			notesplashes = love.graphics.newImage(graphics.imagePath("noteSplashes")),
-			numbers = love.graphics.newImage(graphics.imagePath("numbers"))
+			numbers = love.graphics.newImage(graphics.imagePath("numbers")),
+			goofyNumbers = love.graphics.newImage(graphics.imagePath("goofyNumbers")),
 		}
 
 		sprites = {
 			icons = love.filesystem.load("sprites/icons.lua"),
-			numbers = love.filesystem.load("sprites/numbers.lua")
+			numbers = love.filesystem.load("sprites/numbers.lua"),
+			goofyNumbers = love.filesystem.load("sprites/goofyNumbers.lua"),
 		}
 
 		pauseVolume = {
@@ -111,13 +113,18 @@ return {
 		boyfriendHappy = love.filesystem.load("sprites/characters/boyfriendHappyThoughts.lua")()
 
 		rating = love.filesystem.load("sprites/rating.lua")()
+		goofyRating = love.filesystem.load("sprites/goofyRating.lua")()
 
 		rating.sizeX, rating.sizeY = 0.75, 0.75
+		goofyRating.sizeX, goofyRating.sizeY = 0.75, 0.75
 		numbers = {}
+		goofyNumbers = {}
 		for i = 1, 3 do
 			numbers[i] = sprites.numbers()
-
 			numbers[i].sizeX, numbers[i].sizeY = 0.5, 0.5
+
+			goofyNumbers[i] = sprites.goofyNumbers()
+			goofyNumbers[i].sizeX, goofyNumbers[i].sizeY = 0.5, 0.5
 		end
 
 		enemyIcon = sprites.icons()
@@ -165,14 +172,10 @@ return {
 		cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 150
 
 		rating.x = girlfriend.x
-		if not pixel then
-			for i = 1, 3 do
-				numbers[i].x = girlfriend.x - 100 + 50 * i
-			end
-		else
-			for i = 1, 3 do
-				numbers[i].x = girlfriend.x - 100 + 58 * i
-			end
+		goofyRating.x = girlfriend.x
+		for i = 1, 3 do
+			numbers[i].x = girlfriend.x - 100 + 50 * i
+			goofyNumbers[i].x = enemy.x + 300 + 50 * i
 		end
 
 		ratingVisibility = {0}
@@ -1350,29 +1353,39 @@ return {
 											combo = combo + 1
 
 											rating:animate(ratingAnim, false)
+											goofyRating:animate(ratingAnim, false)
 											numbers[1]:animate(tostring(math.floor(combo / 100 % 10), false)) -- 100's
 											numbers[2]:animate(tostring(math.floor(combo / 10 % 10), false)) -- 10's
 											numbers[3]:animate(tostring(math.floor(combo % 10), false)) -- 1's
+											goofyNumbers[1]:animate(tostring(math.floor(combo / 100 % 10), false)) -- 100's
+											goofyNumbers[2]:animate(tostring(math.floor(combo / 10 % 10), false)) -- 10's
+											goofyNumbers[3]:animate(tostring(math.floor(combo % 10), false)) -- 1's
 
-											for i = 1, 5 do
+											for i = 1, 6 do
 												if ratingTimers[i] then Timer.cancel(ratingTimers[i]) end
 											end
 
 											ratingVisibility[1] = 1
 											rating.y = girlfriend.y - 50
+											goofyRating.y = girlfriend.y - 200
 											for i = 1, 3 do
 												numbers[i].y = girlfriend.y + 50
+												goofyNumbers[i].y = girlfriend.y - 130
 											end
 
 											ratingTimers[1] = Timer.tween(2, ratingVisibility, {0})
 											ratingTimers[2] = Timer.tween(2, rating, {y = girlfriend.y - 100}, "out-elastic")
+											ratingTimers[6] = Timer.tween(2, goofyRating, {y = girlfriend.y - 150}, "out-elastic")
 											if combo >= 100 then
 												ratingTimers[3] = Timer.tween(2, numbers[1], {y = girlfriend.y + love.math.random(-10, 10)}, "out-elastic") -- 100's
+												ratingTimers[3] = Timer.tween(2, goofyNumbers[1], {y = girlfriend.y - 80 + love.math.random(-10, 10)}, "out-elastic") -- 100's
 											end
 											if combo >= 10 then
 												ratingTimers[4] = Timer.tween(2, numbers[2], {y = girlfriend.y + love.math.random(-10, 10)}, "out-elastic") -- 10's
+												ratingTimers[4] = Timer.tween(2, goofyNumbers[2], {y = girlfriend.y - 80 + love.math.random(-10, 10)}, "out-elastic") -- 10's
 											end
 											ratingTimers[5] = Timer.tween(2, numbers[3], {y = girlfriend.y + love.math.random(-10, 10)}, "out-elastic") -- 1's
+											ratingTimers[5] = Timer.tween(2, goofyNumbers[3], {y = girlfriend.y - 80 + love.math.random(-10, 10)}, "out-elastic") -- 1's
 
 											table.remove(boyfriendNote, i)
 
@@ -1526,25 +1539,18 @@ return {
 			end
 
 			graphics.setColor(1, 1, 1, ratingVisibility[1])
-			if not pixel then
-				rating:draw()
-				if combo >= 100 then
-					numbers[1]:draw()
-				end
-				if combo >= 10 then
-					numbers[2]:draw()
-				end
-				numbers[3]:draw()
-			else
-				rating:udraw(6, 6)
-				if combo >= 100 then
-					numbers[1]:udraw(6,6)
-				end
-				if combo >= 10 then
-					numbers[2]:udraw(6,6)
-				end
-				numbers[3]:udraw(6,6)
+			if not notebookTime then rating:draw()
+			else goofyRating:draw() end
+			if combo >= 100 then
+				if not notebookTime then numbers[1]:draw()
+				else goofyNumbers[1]:draw() end
 			end
+			if combo >= 10 then
+				if not notebookTime then numbers[2]:draw()
+				else goofyNumbers[2]:draw() end
+			end
+			if not notebookTime then numbers[3]:draw()
+			else goofyNumbers[3]:draw() end
 			graphics.setColor(1, 1, 1)
 		love.graphics.pop()
 	end,

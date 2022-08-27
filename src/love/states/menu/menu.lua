@@ -104,15 +104,13 @@ return {
 		for i = 1, 15 do
 			table.insert(whiteRectangles, graphics.newImage(love.graphics.newImage(graphics.imagePath("menu/whiteRectangle"))))
 			whiteRectangles[i].x = -780 + 100*i
-			whiteRectangles[i].y = -1000
+			whiteRectangles[i].y = -1200
 		end
 
 		girlfriendTitle.x, girlfriendTitle.y = 500, 65
 		titleEnter.x, titleEnter.y = 225, 450
 
 		__doingIntro = true
-		--logoRotate()
-		--tweenMenu()
 
 		girlfriendTitle.x, girlfriendTitle.y = 325, 65
 
@@ -161,20 +159,31 @@ return {
 			end
 			if input:pressed("confirm") then
 				
-				if not changingMenu then
-					titleEnter:animate("pressed", true)
-					audio.playSound(confirmSound)
-					changingMenu = true
-					for i = 1, 15 do
-						Timer.tween(0.5 + 0.1 + 0.03*i, whiteRectangles[i], {y = 0}, "linear",
-							function()
-								if i == 15 then
-									Gamestate.switch(menuSelect)
-									status.setLoading(false)
+				if not __doingIntro then
+					if not changingMenu then
+						titleEnter:animate("pressed", true)
+						audio.playSound(confirmSound)
+						changingMenu = true
+						for i = 1, 15 do
+							Timer.tween(0.5 + 0.1 + 0.03*i, whiteRectangles[i], {y = 0}, "linear",
+								function()
+									if i == 15 then
+										Timer.after(
+											0.15,
+											function()
+												Gamestate.switch(menuSelect)
+												status.setLoading(false)
+											end
+										)
+									end
 								end
-							end
-						)
+							)
+						end
 					end
+				else
+					music:seek(11.70, "seconds")
+					__doingIntro = false
+					Timer.tween(3, leFade, {[1] = 1}, "out-quad")
 				end
 			elseif input:pressed("back") then
 				audio.playSound(selectSound)
@@ -198,8 +207,7 @@ return {
 					love.graphics.translate(graphics.getWidth()/2, graphics.getHeight()/2)
 					logo:draw()
 
-					--love.graphics.setColor(1, 63 / 255, 172 / 255, 0.9)
-					love.graphics.setColor(0, 0, 0, 0.9)
+					love.graphics.setColor(0, 0, 0, 0.85)
 					for i = 1, 15 do
 						whiteRectangles[i]:draw()
 					end
@@ -222,11 +230,11 @@ return {
 						if not didTimers[1] then
 							didTimers[1] = true
 							Timer.after(
-								0.85,
+								1,
 								function()
 									didTimers[2] = true
 									Timer.after(
-										0.85,
+										0.65,
 										function()
 											didTimers[3] = true
 										end
@@ -245,11 +253,11 @@ return {
 						if not didTimers[4] then
 							didTimers[4] = true
 							Timer.after(
-								0.85,
+								0.65,
 								function()
 									didTimers[5] = true
 									Timer.after(
-										0.85,
+										0.65,
 										function()
 											didTimers[6] = true
 										end
