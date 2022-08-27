@@ -533,42 +533,46 @@ return {
 						if noteType >= 4 then
 							local id = noteType - 3
 							local c = #enemyNotes[id] + 1
+							local c2 = #goofyEnemyNotes[id] + 1
 							local x = enemyArrows[id].x
 
 							table.insert(enemyNotes[id], sprite())
 							table.insert(goofyEnemyNotes[id], goofySprite())
 							enemyNotes[id][c].x = x
+							goofyEnemyNotes[id][c2].x = x
 							enemyNotes[id][c].y = -400 + noteTime * 0.6 * speed
-							goofyEnemyNotes[id][c].x = x
-							goofyEnemyNotes[id][c].y = -400 + noteTime * 0.6 * speed
+							goofyEnemyNotes[id][c2].y = -400 + noteTime * 0.6 * speed
 
 							enemyNotes[id][c]:animate("on", false)
-							goofyEnemyNotes[id][c]:animate("on", true)
+							goofyEnemyNotes[id][c2]:animate("on", true)
 
 							if chart[i].sectionNotes[j].noteLength > 0 then
 								local c
+								local c2
 
 								for k = 71 / speed, chart[i].sectionNotes[j].noteLength, 71 / speed do
 									local c = #enemyNotes[id] + 1
+									local c2 = #goofyEnemyNotes[id] + 1
 
 									table.insert(enemyNotes[id], sprite())
 									table.insert(goofyEnemyNotes[id], goofySprite())
 									enemyNotes[id][c].x = x
 									enemyNotes[id][c].y = -400 + (noteTime + k) * 0.6 * speed
-									goofyEnemyNotes[id][c].x = x 
-									goofyEnemyNotes[id][c].y = -400 + (noteTime + k) * 0.6 * speed
+									goofyEnemyNotes[id][c2].x = x 
+									goofyEnemyNotes[id][c2].y = -400 + (noteTime + k) * 0.6 * speed
 
 									enemyNotes[id][c]:animate("hold", false)
-									goofyEnemyNotes[id][c]:animate("hold", false)
+									goofyEnemyNotes[id][c2]:animate("hold", false)
 								end
 
 								c = #enemyNotes[id]
+								c2 = #goofyEnemyNotes[id]
 
 								enemyNotes[id][c].offsetY = 10
-								goofyEnemyNotes[id][c].offsetY = 10
+								goofyEnemyNotes[id][c2].offsetY = 10
 
 								enemyNotes[id][c]:animate("end", false)
-								goofyEnemyNotes[id][c]:animate("end", false)
+								goofyEnemyNotes[id][c2]:animate("end", false)
 							end
 						else
 							local id = noteType + 1
