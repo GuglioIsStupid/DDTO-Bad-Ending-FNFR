@@ -33,7 +33,8 @@ local inputList = {
 local missCounter = 0
 local noteCounter = 0
 local altScore = 0
-
+local didDamage = false
+local didHealth = false
 local ratingTimers = {}
 
 local useAltAnims
@@ -140,7 +141,6 @@ return {
 		enemyIcon.sizeX, enemyIcon.sizeY = 1.5, 1.5
 		boyfriendIcon.sizeX, boyfriendIcon.sizeY = -1.5, 1.5
 		healthBarColorPlayer = {49,176,209}
-		
 
 		countdownFade = {}
 		countdown = love.filesystem.load("sprites/countdown.lua")()
@@ -159,6 +159,8 @@ return {
 		missCounter = 0
 		noteCounter = 0
 		altScore = 0
+		didDamage = false
+		didHealth = false
 		doingAnim = false -- for week 4 stuff
 		hitSick = false
 		paused = false
@@ -1259,12 +1261,20 @@ return {
 
 									combo = 0
 									if not settings.noMiss then
-										health = health - 2
+										if not didDamage then 
+											health = health - 2
+											missCounter = missCounter + 1
+											didDamage = true 
+											Timer.after(
+												0.13,
+												function()
+													didDamage = false
+												end
+											)
+										end
 									else
 										health = 0
-									end
-
-									missCounter = missCounter + 1
+									end									
 								end
 							end
 						end
@@ -1458,7 +1468,16 @@ return {
 
 							if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 3); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3) end
 
-							health = health + 1
+							if not didHealth then
+								health = health + 1
+								didHealth = true
+								Timer.after(
+									0.05,
+									function()
+										didHealth = false
+									end
+								)
+							end
 						end
 
 						if input:released(curInput) then

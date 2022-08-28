@@ -93,24 +93,23 @@ return {
 
 		-------------------
 
-		function camZoom(time, int)
+		function camZoom(time, num)
 			local time = time or 0.5
-			local int = int or 0.03
-			if not camTween then
-				camTween = Timer.tween(
-					time,
-					cam,
-					{
-						sizeX = cam.sizeX + int,
-						sizeY = cam.sizeY + int
-					},
-					"out-quad",
-					function()
-						camTween = nil
-					end
-				)
+			local num = num or 0.03
+			if camTween then
+				Timer.cancel(camTween)
 			end
+			camTween = Timer.tween(
+				time,
+				cam,
+				{
+					sizeX = cam.sizeX + num,
+					sizeY = cam.sizeY + num
+				},
+				"out-quad"
+			)
 		end
+		
 		function sadTimeFunc() 
 			weeks:safeAnimate(girlfriend, "glitch", false, 3)
 			camZoom(0.65, 0.15, true)
