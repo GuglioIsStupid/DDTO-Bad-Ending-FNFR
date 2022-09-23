@@ -452,6 +452,26 @@ return {
 			if musicTime >= 228427 and musicTime <= 228477 then
 				changeVisiblity("boyfriendStrum",0, 0.2, 0)
 			end
+			if musicTime >= 227227 and musicTime <= 227277 then
+				weeks:safeAnimate(enemy4, "dies", 2, false, 30)
+				if ballsFinish then
+					Timer.cancel(ballsFinish)
+				end
+				Timer.after(
+					0.6,
+					function()
+						ballsFinish = Timer.tween(
+							1.86,
+							enemy,
+							{
+								x = enemy.x + 600
+							},
+							"out-quad"
+						)
+					end
+				)
+				
+			end
 			if closeUp then 
 				cam.sizeX, cam.sizeY = 0.95, 0.95 
 				cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 150
@@ -615,20 +635,6 @@ return {
 						sadTime = true
 					end
 					if musicTime >= 224827 then
-						if enemy4:getAnimName() == "down" or enemy4:getAnimName() == "up" then
-							if not ballsFinish then weeks:safeAnimate(enemy4, "dies", 2, false, 30) end
-							if ballsFinish then
-								Timer.cancel(ballsFinish)
-							end
-							ballsFinish = Timer.tween(
-								1.66,
-								enemy,
-								{
-									x = enemy.x + 600
-								},
-								"out-quad"
-							)
-						end
 						closeUp = true
 						inWhite = true
 						enemy4:draw()
