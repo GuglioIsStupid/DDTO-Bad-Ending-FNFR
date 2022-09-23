@@ -67,6 +67,8 @@ return {
 		pauseCurtain.x, pauseCurtain.y = 300, -1000
 		pausedGraphic.x, pausedGraphic.y = 2000, 150
 
+		healthTimer = Timer.after(0.1, function()end)
+
 		pausedGraphic.sizeX, pausedGraphic.sizeY = 0.6, 0.6
 		sounds = {
 			countdown = {
@@ -891,10 +893,11 @@ return {
 		)
 	end,
 
-	safeAnimate = function(self, sprite, animName, loopAnim, timerID)
+	safeAnimate = function(self, sprite, animName, loopAnim, timerID, timeTaken)
+		local timeTaken = timeTaken or 12
 		sprite:animate(animName, loopAnim)
 
-		spriteTimers[timerID] = 12
+		spriteTimers[timerID] = timeTaken
 	end,
 
 	update = function(self, dt)
@@ -918,7 +921,6 @@ return {
 				end
 			end
 		end
-
 
         function tweenPauseButtons()
 			if week ~= 5 then
@@ -1097,11 +1099,13 @@ return {
 								camTimer = Timer.tween(1.25, cam, {x = -enemy3.x - 100, y = -enemy3.y + 75}, "out-quad")
 							end
 						end
-					else
-						if events[i].mustHitSection then
-							camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
-						else
-							camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+					elseif song == 2 then
+						if not closeUp then
+							if events[i].mustHitSection then
+								camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
+							else
+								camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+							end
 						end
 					end
 
@@ -1144,7 +1148,7 @@ return {
 					self:safeAnimate(enemy, "idle", false, 2)
 					self:safeAnimate(enemy2, "idle", false, 2)
 					self:safeAnimate(enemy3, "idle", false, 2)
-					if enemy4 then self:safeAnimate(enemy4, "idle", false, 2) end
+					if enemy4:getAnimName() ~= "dies" then if enemy4 then self:safeAnimate(enemy4, "idle", false, 2) end end
 				end
 				if spriteTimers[3] == 0 then
 					self:safeAnimate(boyfriend, "idle", false, 3)
@@ -1265,7 +1269,7 @@ return {
 											health = health - 2
 											missCounter = missCounter + 1
 											didDamage = true 
-											Timer.after(
+											healthTimer = Timer.after(
 												0.13,
 												function()
 													didDamage = false

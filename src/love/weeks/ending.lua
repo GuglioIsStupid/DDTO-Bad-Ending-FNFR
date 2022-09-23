@@ -6,28 +6,33 @@ return {
 		poemTransitionSwirl.sizeX, poemTransitionSwirl.sizeY = 2.2, 2.2
 
 		transparent = {
-			["BGSketch"] = 0
+			["BGSketch"] = 0,
+			["enemysong2"] = 0,
+			['backgroundsong2'] = 0
 		}
 
-		song = 1
+		song = 2
 
 		if song == 1 then
 			enemy = love.filesystem.load("sprites/characters/sayori.lua")()
 			enemy2 = love.filesystem.load("sprites/characters/sayoriSad.lua")()
 			enemy3 = love.filesystem.load("sprites/characters/sayoriHappyThoughts.lua")()
+			enemy.x, enemy.y = -380, 270
+			enemy2.x, enemy2.y = -380, 380
+			enemy3.x, enemy3.y = -380, -30
 		elseif song == 2 then
 			enemy = love.filesystem.load("sprites/characters/yuri.lua")()
 			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
 			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
 			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
+			enemy3.x, enemy3.y = 25, 150
+			enemy3.sizeX, enemy3.sizeY = 3, 3
 		elseif song == 3 then
 
 		end
 	
 		girlfriend.x, girlfriend.y = 30, 210
-		enemy.x, enemy.y = -380, 270
-		enemy2.x, enemy2.y = -380, 380
-		enemy3.x, enemy3.y = -380, -30
+		
 		boyfriend.x, boyfriend.y = 260, 410
 		boyfriendSad.x, boyfriendSad.y = 260, 460
 		boyfriendHappy.x, boyfriendHappy.y = 260, 100
@@ -87,6 +92,11 @@ return {
 		notepad.notepadOverlay.x = 100
 		notepad.notepad.y = 50
 		notepad.notepadOverlay.y = 50
+
+		closet = {
+			closetBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/ClosetBG"))),
+		}
+		closet.closetBG.x, closet.closetBG.y = 125,150
 
 		paperBG = love.filesystem.load("sprites/ending/paperBG.lua")()
 		paperBG.sizeX, paperBG.sizeY = 1.4, 1.4
@@ -179,6 +189,7 @@ return {
 		healthBarColorEnemy = {healthBarColours[song][1],healthBarColours[song][2],healthBarColours[song][3]}
 		healthBarColorPlayer = {49,176,209}
 		boyfriendIcon:animate("boyfriend", false)
+		closeUp = true
 				
 		
 		if song == 3 then
@@ -187,6 +198,18 @@ return {
 		elseif song == 2 then
 			inst = love.audio.newSource("songs/ending/markov/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/markov/Voices.ogg", "stream")
+			enemy = love.filesystem.load("sprites/characters/yuri.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
+			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
+			enemy3.x, enemy3.y = 150, 325
+			enemy2.x, enemy2.y = 150, 325
+			enemy4.x, enemy4.y = 150, 325
+			enemy3.sizeX, enemy3.sizeY = 1.55, 1.55
+			enemy2.sizeX, enemy2.sizeY = 1.55, 1.55
+			enemy4.sizeX, enemy4.sizeY = 1.55, 1.55
+			enemy.x, enemy.y = -380, 270
+			camZoom(0, 0.2)
 			transparent["enemy"] = 0
 		else
 			inst = love.audio.newSource("songs/ending/stagnant/Inst.ogg", "stream")
@@ -292,6 +315,63 @@ return {
 			end
 		elseif song == 2 then
 			-- Markov
+			if musicTime >= 0 and musicTime <= 50 then
+				if openingBalls then
+					Timer.cancel(openingBalls)
+				end
+				openingBalls = Timer.tween(
+					8,
+					transparent,
+					{ ["backgroundsong2"] = 1 },
+					'linear',
+					function()
+						Timer.tween(
+							4,
+							transparent,
+							{ ["enemysong2"] = 1 },
+							'linear'
+						)
+					end
+				)
+			end
+			if musicTime >= 45924 and musicTime <= 45974 then 
+				camZoom(0.1, 0.2)
+			end
+			if musicTime >= 106027 and musicTime <= 106077 then
+				camZoom(0.3, -0.2)
+			end
+			if musicTime >= 126027 and musicTime <= 126077 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 137227 and musicTime <= 137277 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 138472 and musicTime <= 138522 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 139627 and musicTime <= 139677 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 140827 and musicTime <= 140877 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 142027 and musicTime <= 142077 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 143227 and musicTime <= 143277 then
+				camZoom(0.03, 0.015)
+			end
+			if musicTime >= 144472 and musicTime <= 144522 then
+				camZoom(0.3, -0.2)
+			end
+			if musicTime >= 173227 and musicTime <= 173277 then
+				camZoom(0.4, 0.2)
+				love.graphics.setBackgroundColor(1,1,1)
+			end
+			if closeUp then 
+				cam.sizeX, cam.sizeY = 0.95, 0.95 
+				cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 150
+			end
 		else
 			-- Home
         end
@@ -366,33 +446,42 @@ return {
 
 			love.graphics.push()
 				love.graphics.translate(cam.x * 0.9, cam.y * 0.9)
-				if song == 1 and (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
-					clubroom.farBG:draw()
-					clubroom.mainBG:draw()
-				elseif song == 2 then
-					clubroom.farBG:draw()
-					clubroom.mainBG:draw()
-				end
-				if sadTime then
-					clubroom2.sky:draw()
-					clubroom2.mainBG:draw()
-					if (musicTime >= 87999 and musicTime <= 110000) or (musicTime >= 189333 and musicTime <= 194666) then
-						love.graphics.setColor(1,1,1,transparent["BGSketch"])
-						clubroom2.bgSketch:draw()
-						love.graphics.setColor(1,1,1,1)
+				if not inWhite then
+					if song == 1 and (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+						clubroom.farBG:draw()
+						clubroom.mainBG:draw()
 					end
-				end
-				if ruinedTime then
-					ruinedclub.glitchBack:draw()
-					ruinedclub.mainBG:draw()
-					ruinedclub.glitchFront:draw()
-				end
-				if notebookTime then
-					paperBG:draw()
-				end
-				love.graphics.scale(0.75, 0.75)
-				if not notebookTime then
-					girlfriend:draw()
+					if sadTime then
+						clubroom2.sky:draw()
+						clubroom2.mainBG:draw()
+						if (musicTime >= 87999 and musicTime <= 110000) or (musicTime >= 189333 and musicTime <= 194666) then
+							love.graphics.setColor(1,1,1,transparent["BGSketch"])
+							clubroom2.bgSketch:draw()
+							love.graphics.setColor(1,1,1,1)
+						end
+					end
+					if closeUp then
+						love.graphics.setColor(1,1,1,transparent["backgroundsong2"])
+						closet.closetBG:draw()
+					end
+					if ruinedTime then
+						ruinedclub.glitchBack:draw()
+						ruinedclub.mainBG:draw()
+						ruinedclub.glitchFront:draw()
+					end
+					if notebookTime then
+						paperBG:draw()
+					end
+					love.graphics.scale(0.75, 0.75)
+					if song == 1 then
+						if not notebookTime then
+							girlfriend:draw()
+						end
+					elseif song == 2 then
+						if not dontDrawBF then
+							girlfriend:draw()
+						end
+					end
 				end
 			love.graphics.pop()
 			love.graphics.push()
@@ -416,16 +505,40 @@ return {
 				-- Markov
 				elseif song == 2 then
 					if musicTime <= 44486 then
+						closeUp = true
+						love.graphics.setColor(1,1,1,transparent["enemysong2"])
 						enemy3:draw()
+						love.graphics.setColor(1,1,1,1)
 						dontDrawBF = true
+						sadTime = false
 					end
-					if (musicTime >= 44589 and musicTime <= 46027) or (musicTime >= 85927 and musicTime <= 125227) then
+					if (musicTime >= 44486 and musicTime <= 46027) or (musicTime >= 85927 and musicTime <= 125227) or (musicTime >= 182452 and musicTime <= 216427) or (musicTime >= 216727 and musicTime <= 217627) or (musicTime >= 217927 and musicTime <= 218827) or (musicTime >= 219127 and musicTime <= 220027) or (musicTime >= 220327 and musicTime <= 221227) or (musicTime >= 221527 and musicTime <= 222427) or (musicTime >= 222727 and musicTime <= 223627) or (musicTime >= 223927 and musicTime <= 224827) then
+						closeUp = true
 						enemy2:draw()
 						dontDrawBF = true
+						sadTime = false
 					end
-					if (musicTime >= 46027 and musicTime <= 85927) then
+					if (musicTime >= 46027 and musicTime <= 85927) or (musicTime >= 125227 and musicTime <= 182452) then
+						closeUp = false
 						enemy:draw()
 						dontDrawBF = false
+					end
+					if musicTime >= 224827 then
+						if enemy4:getAnimName() == "down" or enemy4:getAnimName() == "up" then
+							weeks:safeAnimate(enemy4, "dies", 2, 30)
+						end
+						closeUp = true
+						inWhite = true
+						enemy4:draw()
+						dontDrawBF = false
+						sadTime = false
+					end
+					if (musicTime >= 216427 and musicTime <= 216727) or (musicTime >= 217627 and musicTime <= 217927) or (musicTime >= 218827 and musicTime <= 219127) or (musicTime >= 220027 and musicTime <= 220327) or (musicTime >= 221227 and musicTime <= 221527) or (musicTime >= 222427 and musicTime <= 222727) or (musicTime >= 223627 and musicTime <= 223927) then
+						inWhite = false
+						closeUp = true
+						enemy4:draw()
+						dontDrawBF = true
+						sadTime = true
 					end
 					if not dontDrawBF then
 						boyfriendSad:draw()
@@ -438,8 +551,10 @@ return {
 			love.graphics.pop()
 			love.graphics.push()
 				love.graphics.translate(cam.x * 1.1, cam.y * 1.1)
-				if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
-					clubroom.DesksFront:draw()
+				if song == 1 then
+					if (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+						clubroom.DesksFront:draw()
+					end
 				end
 			love.graphics.pop()
 
