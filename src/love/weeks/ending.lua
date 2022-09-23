@@ -361,7 +361,7 @@ return {
 			-- Markov
 			if musicTime >= 0 and musicTime <= 50 then
 				changeVisiblity("backgroundsong2", 1, 8, 0)
-				changeVisiblity("enemysong2", 1, 2, 8)
+				changeVisiblity("enemysong2", 1, 4, 8)
 			end
 			if musicTime >= 10787 and musicTime <= 10837 then 
 				weeks:safeAnimate(enemy3, "appear", 2, false)
@@ -370,7 +370,7 @@ return {
 				changeVisiblity("enemyStrum", 1, 3, 0)
 			end
 			if musicTime >= 41404 and musicTime <= 41454 then
-				changeVisiblity("enemysong2", 0, 2, 0.05)
+				changeVisiblity("enemysong2", 0, 4, 0.05)
 				changeVisiblity("backgroundsong2", 0, 4, 1.2)
 			end
 			if musicTime >= 41712 and musicTime <= 41762 then

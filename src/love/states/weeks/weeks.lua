@@ -1228,14 +1228,14 @@ return {
 									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim .. " alt", true, 2) end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim .. " alt", true, 2) end
 									if enemy4 then
-										if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim .. " alt", true, 2) end
+										if not inWhite and not ballsFinish then if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim .. " alt", true, 2) end end
 									end
 								else
 									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim, true, 2) end
 									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim, true, 2) end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim, true, 2) end
 									if enemy4 then
-										if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim, true, 2) end
+										if not inWhite and not ballsFinish then if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim .. " alt", true, 2) end end
 									end
 								end
 							else
@@ -1627,6 +1627,7 @@ return {
 				else
 					love.graphics.setColor(1, 1, 1, 1)
 				end
+				graphics.setColor(1,1,1,1)
 				graphics.setColor(1, 1, 1, transparent["boyfriendStrum"])
 				if not paused then
 					if not notebookTime then
@@ -1743,6 +1744,7 @@ return {
 							graphics.setColor(1, 1, 1)
 						end
 					end
+					graphics.setColor(1,1,1,1)
 					graphics.setColor(1, 1, 1, transparent["boyfriendStrum"])
 					for j = #boyfriendNotes[i], 1, -1 do
 						if (not settings.downscroll and boyfriendNotes[i][j].y - musicPos <= 560) or (settings.downscroll and boyfriendNotes[i][j].y - musicPos >= -560) then
