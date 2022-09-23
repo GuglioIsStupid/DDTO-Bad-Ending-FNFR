@@ -524,6 +524,7 @@ return {
 						closeUp = false
 						enemy:draw()
 						dontDrawBF = false
+						sadTime = true
 					end
 					if musicTime >= 224827 then
 						if enemy4:getAnimName() == "down" or enemy4:getAnimName() == "up" then
@@ -540,7 +541,7 @@ return {
 						closeUp = true
 						enemy4:draw()
 						dontDrawBF = true
-						sadTime = true
+						sadTime = false
 					end
 					if not dontDrawBF then
 						boyfriendSad:draw()
