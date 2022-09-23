@@ -1235,7 +1235,7 @@ return {
 									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim, true, 2) end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim, true, 2) end
 									if enemy4 then
-										if not inWhite and not ballsFinish then if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim .. " alt", true, 2) end end
+										if not inWhite and not ballsFinish then if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim, true, 2) end end
 									end
 								end
 							else
