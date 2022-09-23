@@ -249,6 +249,7 @@ return {
 			enemy2.sizeX, enemy2.sizeY = 1.35, 1.35
 			enemy4.sizeX, enemy4.sizeY = 1.35, 1.35
 			enemy.x, enemy.y = -380, 270
+			girlfriend.x, girlfriend.y = 30, 230
 			camZoom(0, 0.2)
 			transparent["enemy"] = 0
 			transparent["enemyStrum"] = 0
