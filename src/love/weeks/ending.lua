@@ -454,10 +454,12 @@ return {
 					if sadTime then
 						clubroom2.sky:draw()
 						clubroom2.mainBG:draw()
-						if (musicTime >= 87999 and musicTime <= 110000) or (musicTime >= 189333 and musicTime <= 194666) then
-							love.graphics.setColor(1,1,1,transparent["BGSketch"])
-							clubroom2.bgSketch:draw()
-							love.graphics.setColor(1,1,1,1)
+						if song == 1 then
+							if (musicTime >= 87999 and musicTime <= 110000) or (musicTime >= 189333 and musicTime <= 194666) then
+								love.graphics.setColor(1,1,1,transparent["BGSketch"])
+								clubroom2.bgSketch:draw()
+								love.graphics.setColor(1,1,1,1)
+							end
 						end
 					end
 					if closeUp then
