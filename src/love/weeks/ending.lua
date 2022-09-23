@@ -206,8 +206,8 @@ return {
 			enemy2.x, enemy2.y = 150, 325
 			enemy4.x, enemy4.y = 150, 325
 			enemy3.sizeX, enemy3.sizeY = 1.55, 1.55
-			enemy2.sizeX, enemy2.sizeY = 1.55, 1.55
-			enemy4.sizeX, enemy4.sizeY = 1.55, 1.55
+			enemy2.sizeX, enemy2.sizeY = 1.35, 1.35
+			enemy4.sizeX, enemy4.sizeY = 1.35, 1.35
 			enemy.x, enemy.y = -380, 270
 			camZoom(0, 0.2)
 			transparent["enemy"] = 0
@@ -533,7 +533,7 @@ return {
 						closeUp = true
 						inWhite = true
 						enemy4:draw()
-						dontDrawBF = false
+						dontDrawBF = true
 						sadTime = false
 					end
 					if (musicTime >= 216427 and musicTime <= 216727) or (musicTime >= 217627 and musicTime <= 217927) or (musicTime >= 218827 and musicTime <= 219127) or (musicTime >= 220027 and musicTime <= 220327) or (musicTime >= 221227 and musicTime <= 221527) or (musicTime >= 222427 and musicTime <= 222727) or (musicTime >= 223627 and musicTime <= 223927) then
