@@ -27,11 +27,11 @@ lovefile:
 	@rm -rf build/lovefile
 	@mkdir -p build/lovefile
 
-	@cd src/love; zip -r -9 ../../build/lovefile/vanilla-engine.love .
+	@cd src/love; zip -r -9 ../../build/lovefile/ddto-takeover.love .
 
 	@mkdir -p build/release
-	@rm -f build/release/vanilla-engine-lovefile.zip
-	@cd build/lovefile; zip -9 -r ../release/vanilla-engine-lovefile.zip .
+	@rm -f build/release/ddto-takeover-lovefile.zip
+	@cd build/lovefile; zip -9 -r ../release/ddto-takeover-lovefile.zip .
 
 win64: lovefile
 	@rm -rf build/win64
@@ -47,11 +47,11 @@ win64: lovefile
 	@cp resources/win64/love/msvcr120.dll build/win64
 	@cp resources/win64/love/discord-rpc.dll build/win64
 
-	@cat resources/win64/love/love.exe build/lovefile/vanilla-engine.love > build/win64/vanilla-engine.exe
+	@cat resources/win64/love/love.exe build/lovefile/ddto-takeover.love > build/win64/ddto-takeover.exe
 
 	@mkdir -p build/release
-	@rm -f build/release/vanilla-engine-win64.zip
-	@cd build/win64; zip -9 -r ../release/vanilla-engine-win64.zip .
+	@rm -f build/release/ddto-takeover-win64.zip
+	@cd build/win64; zip -9 -r ../release/ddto-takeover-win64.zip .
 
 win32: lovefile
 	@rm -rf build/win32
@@ -67,11 +67,11 @@ win32: lovefile
 	@cp resources/win32/love/msvcr120.dll build/win32
 	@cp resources/win32/love/discord-rpc.dll build/win32
 
-	@cat resources/win32/love/love.exe build/lovefile/vanilla-engine.love > build/win32/vanilla-engine.exe
+	@cat resources/win32/love/love.exe build/lovefile/ddto-takeover.love > build/win32/ddto-takeover.exe
 
 	@mkdir -p build/release
-	@rm -f build/release/vanilla-engine-win32.zip
-	@cd build/win32; zip -9 -r ../release/vanilla-engine-win32.zip .
+	@rm -f build/release/ddto-takeover-win32.zip
+	@cd build/win32; zip -9 -r ../release/ddto-takeover-win32.zip .
 
 macos: lovefile
 	@rm -rf build/macos
@@ -79,29 +79,29 @@ macos: lovefile
 
 	@cp -r resources/macos/love.app/. "build/macos/Friday Night Funkin' Rewritten.app"
 
-	@cp build/lovefile/vanilla-engine.love "build/macos/Friday Night Funkin' Rewritten.app/Contents/Resources"
+	@cp build/lovefile/ddto-takeover.love "build/macos/Friday Night Funkin' Rewritten.app/Contents/Resources"
 
 	@mkdir -p build/release
-	@rm -f build/release/vanilla-engine-macos.zip
-	@cd build/macos; zip -9 -r ../release/vanilla-engine-macos.zip .
+	@rm -f build/release/ddto-takeover-macos.zip
+	@cd build/macos; zip -9 -r ../release/ddto-takeover-macos.zip .
 
 switch: lovefile
 	@rm -rf build/switch
-	@mkdir -p build/switch/switch/vanilla-engine
+	@mkdir -p build/switch/switch/ddto-takeover
 
-	@nacptool --create "Friday Night Funkin' Vanilla Engine" "Guglio & Clothing Hanger" "$(shell cat version.txt)" build/switch/vanilla-engine.nacp
+	@nacptool --create "Friday Night Funkin' Doki Doki Takeover" "Guglio" "$(shell cat version.txt)" build/switch/ddto-takeover.nacp
 
 	@mkdir build/switch/romfs
-	@cp build/lovefile/vanilla-engine.love build/switch/romfs/game.love
+	@cp build/lovefile/ddto-takeover.love build/switch/romfs/game.love
 
-	@elf2nro resources/switch/love.elf build/switch/switch/vanilla-engine/vanilla-engine.nro --icon=resources/switch/icon.jpg --nacp=build/switch/vanilla-engine.nacp --romfsdir=build/switch/romfs
+	@elf2nro resources/switch/love.elf build/switch/switch/ddto-takeover/ddto-takeover.nro --icon=resources/switch/icon.jpg --nacp=build/switch/ddto-takeover.nacp --romfsdir=build/switch/romfs
 
 	@rm -r build/switch/romfs
-	@rm build/switch/vanilla-engine.nacp
+	@rm build/switch/ddto-takeover.nacp
 
 	@mkdir -p build/release
-	@rm -f build/release/vanilla-engine-switch.zip
-	@cd build/switch; zip -9 -r ../release/vanilla-engine-switch.zip .
+	@rm -f build/release/ddto-takeover-switch.zip
+	@cd build/switch; zip -9 -r ../release/ddto-takeover-switch.zip .
 
 clean:
 	@rm -rf build
