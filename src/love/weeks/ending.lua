@@ -13,9 +13,7 @@ return {
 			["boyfriendStrum"] = 1,
 			["screen"] = 1
 		}
-		
-
-		song = 2
+		song = 1
 
 		if song == 1 then
 			enemy = love.filesystem.load("sprites/characters/sayori.lua")()

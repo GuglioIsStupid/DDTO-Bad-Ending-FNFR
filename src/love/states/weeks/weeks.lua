@@ -1157,7 +1157,7 @@ return {
 						self:safeAnimate(enemy3, "idle", false, 2)
 					end
 					
-					if enemy4:getAnimName() ~= "dies" then if enemy4 then self:safeAnimate(enemy4, "idle", false, 2) end end
+					if enemy4 then if enemy4:getAnimName() ~= "dies" then self:safeAnimate(enemy4, "idle", false, 2) end end
 				end
 				if spriteTimers[3] == 0 then
 					self:safeAnimate(boyfriend, "idle", false, 3)
