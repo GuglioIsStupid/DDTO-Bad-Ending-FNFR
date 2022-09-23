@@ -440,7 +440,13 @@ function love.draw()
 	-- Debug output
 	if settings.showDebug then
 		if not pixel then -- Make debug text readable in pixel week
-			love.graphics.print(status.getDebugStr(settings.showDebug), 5, 5, nil, 0.5, 0.5)
+			if not inWhite then
+				love.graphics.print(status.getDebugStr(settings.showDebug), 5, 5, nil, 0.5, 0.5)
+			else
+				love.graphics.setColor(0,0,0)
+				love.graphics.print(status.getDebugStr(settings.showDebug), 5, 5, nil, 0.5, 0.5)
+				love.graphics.setColor(1,1,1)
+			end
 		else
 			love.graphics.print(status.getDebugStr(settings.showDebug), 5, 5, nil, 1.8, 1.8)
 		end

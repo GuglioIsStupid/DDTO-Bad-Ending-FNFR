@@ -1147,7 +1147,16 @@ return {
 				if spriteTimers[2] == 0 then
 					self:safeAnimate(enemy, "idle", false, 2)
 					self:safeAnimate(enemy2, "idle", false, 2)
-					self:safeAnimate(enemy3, "idle", false, 2)
+					if song == 3 then
+						if enemy3:getAnimName() == "dies" and not enemy3:isPlaying() then
+							self:safeAnimate(enemy3, "idle", false, 2)
+						else
+							self:safeAnimate(enemy3, "idle", false, 2)
+						end
+					else
+						self:safeAnimate(enemy3, "idle", false, 2)
+					end
+					
 					if enemy4:getAnimName() ~= "dies" then if enemy4 then self:safeAnimate(enemy4, "idle", false, 2) end end
 				end
 				if spriteTimers[3] == 0 then
@@ -1605,6 +1614,7 @@ return {
 					end
 				end
 
+				graphics.setColor(1, 1, 1, transparent["enemyStrum"])
 				if not paused then
 					if not notebookTime then
 						enemyArrows[i]:draw()--ate         guglio why did you type ate here
@@ -1617,6 +1627,7 @@ return {
 				else
 					love.graphics.setColor(1, 1, 1, 1)
 				end
+				graphics.setColor(1, 1, 1, transparent["boyfriendStrum"])
 				if not paused then
 					if not notebookTime then
 						boyfriendArrows[i]:draw()
@@ -1662,6 +1673,7 @@ return {
 						end
 					end
 				end
+				graphics.setColor(1, 1, 1, 1)
 				if settings.botPlay and not pixel then
 					if boyfriendArrows[1]:getAnimName() ~= "confirm" then
 						wasReleased1 = true
@@ -1712,7 +1724,7 @@ return {
 
 				love.graphics.push()
 					love.graphics.translate(0, -musicPos)
-
+					graphics.setColor(1, 1, 1, transparent["enemyStrum"])
 					for j = #enemyNotes[i], 1, -1 do
 						if (not settings.downscroll and enemyNotes[i][j].y - musicPos <= 560) or (settings.downscroll and enemyNotes[i][j].y - musicPos >= -560) then
 							local animName = enemyNotes[i][j]:getAnimName()
@@ -1731,6 +1743,7 @@ return {
 							graphics.setColor(1, 1, 1)
 						end
 					end
+					graphics.setColor(1, 1, 1, transparent["boyfriendStrum"])
 					for j = #boyfriendNotes[i], 1, -1 do
 						if (not settings.downscroll and boyfriendNotes[i][j].y - musicPos <= 560) or (settings.downscroll and boyfriendNotes[i][j].y - musicPos >= -560) then
 							local animName = boyfriendNotes[i][j]:getAnimName()

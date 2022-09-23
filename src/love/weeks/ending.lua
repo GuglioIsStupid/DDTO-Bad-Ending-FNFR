@@ -8,8 +8,12 @@ return {
 		transparent = {
 			["BGSketch"] = 0,
 			["enemysong2"] = 0,
-			['backgroundsong2'] = 0
+			['backgroundsong2'] = 0,
+			["enemyStrum"] = 1,
+			["boyfriendStrum"] = 1,
+			["screen"] = 1
 		}
+		
 
 		song = 2
 
@@ -25,10 +29,17 @@ return {
 			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
 			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
 			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
-			enemy3.x, enemy3.y = 25, 150
+			enemy3.x, enemy3.y = 25, 200
 			enemy3.sizeX, enemy3.sizeY = 3, 3
 		elseif song == 3 then
-
+			enemy = love.filesystem.load("sprites/characters/sayori.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/sayoriSad.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/sayoriHappyThoughts.lua")()
+			enemy.x, enemy.y = -380, 270
+			enemy2.x, enemy2.y = -380, 380
+			enemy3.x, enemy3.y = -380, -30
+			sayo = love.filesystem.load("sprites/characters/sayori.lua")()
+			yuri = love.filesystem.load("sprites/characters/yuri.lua")()
 		end
 	
 		girlfriend.x, girlfriend.y = 30, 210
@@ -119,6 +130,37 @@ return {
 				"out-quad"
 			)
 		end
+		function changeVisiblity(name, value, time, wait)
+			local time = time or 0.5
+			local num = num or 0.03
+			if visTween then
+				Timer.cancel(visTween)
+			end
+			if wait then Timer.after(
+				wait,
+				function()
+					visTween = Timer.tween(
+						time,
+						transparent,
+						{
+							[name] = value
+						},
+						"out-quad"
+					)
+				end
+			)
+			else
+				visTween = Timer.tween(
+					time,
+					transparent,
+					{
+						[name] = value
+					},
+					"out-quad"
+				)
+			end
+			
+		end
 		
 		function sadTimeFunc() 
 			weeks:safeAnimate(girlfriend, "glitch", false, 3)
@@ -193,8 +235,8 @@ return {
 				
 		
 		if song == 3 then
-			inst = love.audio.newSource("songs/ending/dadbattle/Inst.ogg", "stream")
-			voices = love.audio.newSource("songs/ending/dadbattle/Voices.ogg", "stream")
+			inst = love.audio.newSource("songs/ending/home/Inst.ogg", "stream")
+			voices = love.audio.newSource("songs/ending/home/Voices.ogg", "stream")
 		elseif song == 2 then
 			inst = love.audio.newSource("songs/ending/markov/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/markov/Voices.ogg", "stream")
@@ -202,7 +244,7 @@ return {
 			enemy2 = love.filesystem.load("sprites/characters/yuriClose.lua")()
 			enemy3 = love.filesystem.load("sprites/characters/yuriStart.lua")()
 			enemy4 = love.filesystem.load("sprites/characters/yuriFinale.lua")()
-			enemy3.x, enemy3.y = 150, 325
+			enemy3.x, enemy3.y = 150, 350
 			enemy2.x, enemy2.y = 150, 325
 			enemy4.x, enemy4.y = 150, 325
 			enemy3.sizeX, enemy3.sizeY = 1.55, 1.55
@@ -211,6 +253,8 @@ return {
 			enemy.x, enemy.y = -380, 270
 			camZoom(0, 0.2)
 			transparent["enemy"] = 0
+			transparent["enemyStrum"] = 0
+			transparent["screen"] = 1
 		else
 			inst = love.audio.newSource("songs/ending/stagnant/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/stagnant/Voices.ogg", "stream")
@@ -316,26 +360,35 @@ return {
 		elseif song == 2 then
 			-- Markov
 			if musicTime >= 0 and musicTime <= 50 then
-				if openingBalls then
-					Timer.cancel(openingBalls)
-				end
-				openingBalls = Timer.tween(
-					8,
-					transparent,
-					{ ["backgroundsong2"] = 1 },
-					'linear',
-					function()
-						Timer.tween(
-							4,
-							transparent,
-							{ ["enemysong2"] = 1 },
-							'linear'
-						)
-					end
-				)
+				changeVisiblity("backgroundsong2", 1, 8, 0)
+				changeVisiblity("enemysong2", 1, 2, 8)
+			end
+			if musicTime >= 10787 and musicTime <= 10837 then 
+				weeks:safeAnimate(enemy3, "appear", 2, false)
+			end
+			if musicTime >= 13150 and musicTime <= 13200 then
+				changeVisiblity("enemyStrum", 1, 3, 0)
+			end
+			if musicTime >= 41404 and musicTime <= 41454 then
+				changeVisiblity("enemysong2", 0, 2, 0.05)
+				changeVisiblity("backgroundsong2", 0, 4, 1.2)
+			end
+			if musicTime >= 41712 and musicTime <= 41762 then
+				changeVisiblity("enemyStrum", 0, 3, 0)
+				changeVisiblity("boyfriendStrum", 0, 3, 0)
+			end
+			if musicTime >= 46027 and musicTime <= 46077 then
+				changeVisiblity("enemyStrum", 1, 0, 0)
+				changeVisiblity("boyfriendStrum", 1, 0, 0)
 			end
 			if musicTime >= 45924 and musicTime <= 45974 then 
 				camZoom(0.1, 0.2)
+			end
+			if musicTime >= 84427 and musicTime <= 84477 then
+				changeVisiblity("screen", 0, 1.4, 0)
+			end
+			if musicTime >= 86827 and musicTime <= 86877 then
+				changeVisiblity("screen", 1, 0, 0)
 			end
 			if musicTime >= 106027 and musicTime <= 106077 then
 				camZoom(0.3, -0.2)
@@ -367,6 +420,37 @@ return {
 			if musicTime >= 173227 and musicTime <= 173277 then
 				camZoom(0.4, 0.2)
 				love.graphics.setBackgroundColor(1,1,1)
+			end
+			if musicTime >= 216427 and musicTime <= 216477 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 85927 and musicTime <= 85977 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 182452 and musicTime <= 182502 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 216727 and musicTime <= 216777 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 217927 and musicTime <= 217977 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 219127 and musicTime <= 219177 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 220327 and musicTime <= 220377 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 221527 and musicTime <= 221577 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 222727 and musicTime <= 222777 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			elseif musicTime >= 223927 and musicTime <= 223977 then
+				changeVisiblity("backgroundsong2", 1, 0, 0)
+			end
+			if musicTime >= 223627 and musicTime <= 223677 then
+				changeVisiblity("enemyStrum", 0, 0.2, 0)
+				changeVisiblity("boyfriendStrum", 0, 0.2, 0)
+			end
+			if musicTime >= 224302 and musicTime <= 224352 then
+				changeVisiblity("boyfriendStrum", 1, 0.5, 0)
+			end
+			if musicTime >= 228427 and musicTime <= 228477 then
+				changeVisiblity("boyfriendStrum",0, 0.2, 0)
 			end
 			if closeUp then 
 				cam.sizeX, cam.sizeY = 0.95, 0.95 
@@ -447,7 +531,7 @@ return {
 			love.graphics.push()
 				love.graphics.translate(cam.x * 0.9, cam.y * 0.9)
 				if not inWhite then
-					if song == 1 and (musicTime <= 23999) or (musicTime >= 45333 and musicTime <= 66666) then
+					if song == 1 and (musicTime <= 23999) or song == 1 and (musicTime >= 45333 and musicTime <= 66666) then
 						clubroom.farBG:draw()
 						clubroom.mainBG:draw()
 					end
@@ -462,10 +546,6 @@ return {
 							end
 						end
 					end
-					if closeUp then
-						love.graphics.setColor(1,1,1,transparent["backgroundsong2"])
-						closet.closetBG:draw()
-					end
 					if ruinedTime then
 						ruinedclub.glitchBack:draw()
 						ruinedclub.mainBG:draw()
@@ -473,6 +553,11 @@ return {
 					end
 					if notebookTime then
 						paperBG:draw()
+					end
+					if closeUp then
+						love.graphics.setColor(1,1,1,transparent["backgroundsong2"])
+						closet.closetBG:draw()
+						love.graphics.setColor(1,1,1,1)
 					end
 					love.graphics.scale(0.75, 0.75)
 					if song == 1 then
@@ -508,7 +593,7 @@ return {
 				elseif song == 2 then
 					if musicTime <= 44486 then
 						closeUp = true
-						love.graphics.setColor(1,1,1,transparent["enemysong2"])
+						graphics.setColor(1,1,1,transparent["enemysong2"])
 						enemy3:draw()
 						love.graphics.setColor(1,1,1,1)
 						dontDrawBF = true
@@ -521,6 +606,9 @@ return {
 						sadTime = false
 					end
 					if (musicTime >= 46027 and musicTime <= 85927) or (musicTime >= 125227 and musicTime <= 182452) then
+						if girlfriend:getAnimName() ~= "glitch" then
+							girlfriend:animate("glitch")
+						end
 						closeUp = false
 						enemy:draw()
 						dontDrawBF = false
@@ -528,7 +616,18 @@ return {
 					end
 					if musicTime >= 224827 then
 						if enemy4:getAnimName() == "down" or enemy4:getAnimName() == "up" then
-							weeks:safeAnimate(enemy4, "dies", 2, 30)
+							if not ballsFinish then weeks:safeAnimate(enemy4, "dies", 2, false, 30) end
+							if ballsFinish then
+								Timer.cancel(ballsFinish)
+							end
+							ballsFinish = Timer.tween(
+								1.66,
+								enemy,
+								{
+									x = enemy.x + 600
+								},
+								"out-quad"
+							)
 						end
 						closeUp = true
 						inWhite = true
@@ -548,7 +647,10 @@ return {
 					end
 				-- Home
 				elseif song == 3 then
-
+					enemy:draw()
+					boyfriend:draw()
+					sayo:draw()
+					yuri:draw()
 				end
 
 			love.graphics.pop()
