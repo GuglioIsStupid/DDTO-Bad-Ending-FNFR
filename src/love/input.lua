@@ -35,6 +35,7 @@ if love.system.getOS() == "NX" then
 			gameUp = {"axis:lefty-", "axis:righty-", "button:rightshoulder", "button:dpup", "button:y", "key:" .. customBindUp, "key:up"},
 			gameRight = {"axis:triggerright+", "axis:leftx+", "axis:rightx+", "button:dpright", "button:b", "key:" .. customBindRight, "key:right"},
 			gameBack = {"button:start", "key:escape"},
+			BALLS = {"key:+"}
 		},
 		joystick = love.joystick.getJoysticks()[1]
 	}

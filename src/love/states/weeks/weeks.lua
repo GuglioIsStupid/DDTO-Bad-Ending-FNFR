@@ -114,6 +114,7 @@ return {
 		boyfriend = love.filesystem.load("sprites/characters/boyfriend.lua")()
 		boyfriendSad = love.filesystem.load("sprites/characters/boyfriendSad.lua")()
 		boyfriendHappy = love.filesystem.load("sprites/characters/boyfriendHappyThoughts.lua")()
+		silhouette_bf = love.filesystem.load("sprites/characters/silhouette_bf.lua")()
 
 		rating = love.filesystem.load("sprites/rating.lua")()
 		goofyRating = love.filesystem.load("sprites/goofyRating.lua")()
@@ -191,6 +192,7 @@ return {
 		if enemy4 then enemy4:animate("idle") end
 		boyfriend:animate("idle")
 		boyfriendSad:animate("idle")
+		silhouette_bf:animate("idle")
 		boyfriendHappy:animate("idle")
 
 		graphics.fadeIn(0.5)
@@ -1107,6 +1109,22 @@ return {
 								camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
 							end
 						end
+					elseif song ==3 then
+						if mGirlfriend:getAnimName() ~= "end" then
+							if musicTime >= 58800 and musicTime <= 97275 then
+								if events[i].mustHitSection then
+									camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
+								else
+									camTimer = Timer.tween(1.25, cam, {x = -enemy3.x - 100, y = -enemy3.y + 75}, "out-quad")
+								end
+							else
+								if events[i].mustHitSection then
+									camTimer = Timer.tween(1.25, cam, {x = -boyfriend.x + 100, y = -boyfriend.y + 150}, "out-quad")
+								else
+									camTimer = Timer.tween(1.25, cam, {x = -enemy.x - 100, y = -enemy.y + 75}, "out-quad")
+								end
+							end
+						end
 					end
 
 					if events[i].altAnim then
@@ -1122,12 +1140,15 @@ return {
 			end
 
 			girlfriend:update(dt)
+			if mGirlfriend then mGirlfriend:update(dt) end
+			if silhouette_gf then silhouette_gf:update(dt) end
 			enemy:update(dt)
 			enemy2:update(dt)
 			enemy3:update(dt)
 			if enemy4 then enemy4:update(dt) end
 			boyfriend:update(dt)
 			boyfriendSad:update(dt)
+			silhouette_bf:update(dt)
 			boyfriendHappy:update(dt)
 			leftArrowSplash:update(dt)
 			rightArrowSplash:update(dt)
@@ -1141,14 +1162,29 @@ return {
 					else
 						girlfriend:animate("idle", false)
 					end
+					if song == 3 then
+						if mGirlfriend:getAnimName() == "end" then
+						elseif mGirlfriend:getAnimName() == "home" then
+							mGirlfriend:animate("home", false)
+						else
+							mGirlfriend:animate("idle", false)
+						end
+					end
+					if silhouette_gf then silhouette_gf:animate("idle", false) end
 	
 					girlfriend:setAnimSpeed(14.4 / (60 / bpm))
+					if mGirlfriend then 
+						mGirlfriend:setAnimSpeed(14.4 / (60/bpm)) 
+					end
+					if silhouette_gf then silhouette_gf:setAnimSpeed(14.4 / (60 / bpm)) end
 				end
 				if spriteTimers[2] == 0 then
 					self:safeAnimate(enemy, "idle", false, 2)
-					self:safeAnimate(enemy2, "idle", false, 2)
+					if enemy2:getAnimName() ~= "eyes" then 
+						self:safeAnimate(enemy2, "idle", false, 2) 
+					end
 					if song == 3 then
-						if enemy3:getAnimName() == "dies" and not enemy3:isPlaying() then
+						if enemy3:getAnimName() == "dies" and not enemy3:isAnimated() then
 							self:safeAnimate(enemy3, "idle", false, 2)
 						else
 							self:safeAnimate(enemy3, "idle", false, 2)
@@ -1163,6 +1199,7 @@ return {
 					self:safeAnimate(boyfriend, "idle", false, 3)
 					self:safeAnimate(boyfriendSad, "idle", false, 3)
 					self:safeAnimate(boyfriendHappy, "idle", false, 3)
+					self:safeAnimate(silhouette_bf, "idle", false, 3)
 				end
 			end
 
@@ -1232,7 +1269,19 @@ return {
 									end
 								else
 									if (not enemy:isAnimated()) or enemy:getAnimName() == "idle" then self:safeAnimate(enemy, curAnim, true, 2) end
-									if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then self:safeAnimate(enemy2, curAnim, true, 2) end
+									if song == 3 then
+										if not (musicTime >= 56400 and musicTime <= 56450) then
+											if not (enemy2:getAnimName() == "eyes" and not enemy2:isAnimated()) then 
+												if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then 
+													self:safeAnimate(enemy2, curAnim, true, 2) 
+												end 
+											end
+										end
+									else
+										if (not enemy2:isAnimated()) or enemy2:getAnimName() == "idle" then 
+											self:safeAnimate(enemy2, curAnim, true, 2) 
+										end 
+									end
 									if (not enemy3:isAnimated()) or enemy3:getAnimName() == "idle" then self:safeAnimate(enemy3, curAnim, true, 2) end
 									if enemy4 then
 										if not inWhite and not ballsFinish then if (not enemy4:isAnimated()) or enemy4:getAnimName() == "idle" then self:safeAnimate(enemy4, curAnim, true, 2) end end
@@ -1246,7 +1295,15 @@ return {
 									if enemy4 then self:safeAnimate(enemy4, curAnim .. " alt", false, 2) end
 								else
 									self:safeAnimate(enemy, curAnim, false, 2)
-									self:safeAnimate(enemy2, curAnim, false, 2)
+									if song == 3 then
+										if not (musicTime >= 56400 and musicTime <= 56450) then
+											if not (enemy2:getAnimName() == "eyes" and enemy2:isAnimated()) then 
+												self:safeAnimate(enemy2, curAnim, true, 2) 
+											end
+										end
+									else
+										self:safeAnimate(enemy2, curAnim, true, 2) 
+									end
 									self:safeAnimate(enemy3, curAnim, false, 2)
 									if enemy4 then self:safeAnimate(enemy4, curAnim, false, 2) end
 								end
@@ -1423,6 +1480,7 @@ return {
 												self:safeAnimate(boyfriend, curAnim, false, 3)
 												self:safeAnimate(boyfriendSad, curAnim, false, 3)
 												self:safeAnimate(boyfriendHappy, curAnim, false, 3)
+												self:safeAnimate(silhouette_bf, curAnim, false, 3)
 												doingAnim = false
 
 												health = health + 1
@@ -1452,6 +1510,7 @@ return {
 										self:safeAnimate(boyfriend, "miss " .. curAnim, false, 3)
 										self:safeAnimate(boyfriendSad, "miss " .. curAnim, false, 3)
 										self:safeAnimate(boyfriendHappy, "miss " .. curAnim, false, 3)
+										self:safeAnimate(silhouette_bf, "miss " .. curAnim, false, 3)
 
 										hitSick = false
 
@@ -1470,26 +1529,33 @@ return {
 					end
 
 					if not settings.botPlay then
-						if notMissed[noteNum] and #boyfriendNote > 0 and input:down(curInput) and ((not settings.downscroll and boyfriendNote[1].y - musicPos <= -400) or (settings.downscroll and boyfriendNote[1].y - musicPos >= 400)) and (boyfriendNote[1]:getAnimName() == "hold" or boyfriendNote[1]:getAnimName() == "end") then
-							voices:setVolume(1)
+						if input:down(curInput) then
+							if #boyfriendNote > 0 and ((not settings.downscroll and boyfriendNote[1].y - musicPos <= -400) or (settings.downscroll and boyfriendNote[1].y - musicPos >= 400)) and (boyfriendNote[1]:getAnimName() == "hold" or boyfriendNote[1]:getAnimName() == "end") then
+								voices:setVolume(1)
 
-							table.remove(boyfriendNote, 1)
-							table.remove(goofyBoyfriendNote, 1)
+								table.remove(boyfriendNote, 1)
+								table.remove(goofyBoyfriendNote, 1)
 
-							boyfriendArrow:animate("confirm", false)
-							goofyBoyfriendArrow:animate("confirm", true)
+								boyfriendArrow:animate("confirm", false)
+								goofyBoyfriendArrow:animate("confirm", true)
 
-							if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 3); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3) end
+								if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then 
+									self:safeAnimate(boyfriend, curAnim, true, 3); 
+									self:safeAnimate(boyfriendSad, curAnim, true, 3); 
+									self:safeAnimate(boyfriendHappy, curAnim, true, 3) 
+									self:safeAnimate(silhouette_bf, curAnim, true, 3)
+								end
 
-							if not didHealth then
-								health = health + 1
-								didHealth = true
-								Timer.after(
-									0.05,
-									function()
-										didHealth = false
-									end
-								)
+								if not didHealth then
+									health = health + 1
+									didHealth = true
+									Timer.after(
+										0.05,
+										function()
+											didHealth = false
+										end
+									)
+								end
 							end
 						end
 
@@ -1505,11 +1571,12 @@ return {
 							goofyBoyfriendArrow:animate("confirm", true)
 
 							if boyfriendNote[1]:getAnimName() == "hold" or boyfriendNote[1]:getAnimName() == "end" then
-								if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 2); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3) end
+								if (not boyfriend:isAnimated()) or boyfriend:getAnimName() == "idle" then self:safeAnimate(boyfriend, curAnim, true, 2); self:safeAnimate(boyfriendSad, curAnim, true, 3); self:safeAnimate(boyfriendHappy, curAnim, true, 3); self:safeAnimate(silhouette_bf, curAnim, true, 3) end
 							else
 								self:safeAnimate(boyfriend, curAnim, false, 2)
 								self:safeAnimate(boyfriendSad, curAnim, false, 2)
 								self:safeAnimate(boyfriendHappy, curAnim, false, 2)
+								self:safeAnimate(silhouette_bf, curAnim, false, 2)
 							end
 
 							table.remove(boyfriendNote, 1)
@@ -1725,17 +1792,12 @@ return {
 
 				love.graphics.push()
 					love.graphics.translate(0, -musicPos)
-					graphics.setColor(1, 1, 1, transparent["enemyStrum"])
+					
 					for j = #enemyNotes[i], 1, -1 do
 						if (not settings.downscroll and enemyNotes[i][j].y - musicPos <= 560) or (settings.downscroll and enemyNotes[i][j].y - musicPos >= -560) then
 							local animName = enemyNotes[i][j]:getAnimName()
 
-							if animName == "hold" or animName == "end" then
-								graphics.setColor(1, 1, 1, 0.5)
-							end
-							if settings.middleScroll then
-								graphics.setColor(1, 1, 1, 0.5)
-							end
+							graphics.setColor(1, 1, 1, transparent["enemyStrum"])
 							if not notebookTime then
 								enemyNotes[i][j]:draw()
 							else
@@ -1838,15 +1900,15 @@ return {
 
 				if settings.downscroll then
 					if not settings.middleScroll then
-						love.graphics.print("Time Remaining: " .. timeLeftFixed, 0, -400)
+						uitext("Time Remaining: " .. timeLeftFixed, 0, -400)
 					else
-						love.graphics.print("Time Remaining: " .. timeLeftFixed, 605, -400)
+						uitext("Time Remaining: " .. timeLeftFixed, 605, -400)
 					end
 				else
 					if not settings.middlescroll then
-						love.graphics.print("Time Remaining: " .. timeLeftFixed, 0, 350)
+						uitext("Time Remaining: " .. timeLeftFixed, 0, 350)
 					else
-						love.graphics.print("Time Remaining: " .. timeLeftFixed, 605, 350)
+						uitext("Time Remaining: " .. timeLeftFixed, 605, 350)
 					end
 				end
 
@@ -1858,15 +1920,15 @@ return {
 						)
 						if noteCounter + missCounter <= 0 then
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 0% | Rating: ???", -550, -350, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 0% | Rating: ???", -550, -350, 1100, "center")
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 0% | Rating: ???", -550, -350, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 0% | Rating: ???", -550, -350, 1100, "center")
 							end
 						else
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -550, -350, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -550, -350, 1100, "center")
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -550, -350, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -550, -350, 1100, "center")
 							end
 						end
 					else
@@ -1876,21 +1938,21 @@ return {
 						)
 						if noteCounter + missCounter <= 0 then
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -550, 400, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -550, 400, 1100, "center")
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -550, 400, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -550, 400, 1100, "center")
 							end
 						else
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -550, 400, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -550, 400, 1100, "center")
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -550, 400, 1100, "center")
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -550, 400, 1100, "center")
 							end
 						end
 					end
 
 					if settings.sideJudgements then
-						love.graphics.printf(
+						uitextf(
 							"Sicks: " .. sicks ..
 							"\n\nGoods: " .. goods ..
 							"\n\nBads: " .. bads ..
@@ -1911,15 +1973,15 @@ return {
 						)
 						if noteCounter + missCounter <= 0 then
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, -350, 1100, "center", nil, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, -350, 1100, "center", nil, 3.5, 3.5)
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, -350, 1100, "center", nil, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, -350, 1100, "center", nil, 3.5, 3.5)
 							end
 						else
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -1950, -350, 1100, "center", nil, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | Rating: PERFECT!!!", -1950, -350, 1100, "center", nil, 3.5, 3.5)
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -1950, -350, 1100, "center", nil, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -1950, -350, 1100, "center", nil, 3.5, 3.5)
 							end
 						end
 					else
@@ -1929,21 +1991,21 @@ return {
 						)
 						if noteCounter + missCounter <= 0 then
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, 400, 1100, "center", 0, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, 400, 1100, "center", 0, 3.5, 3.5)
 							else
-								love.graphics.printf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, 400, 1100, "center", 0, 3.5, 3.5)
+								uitextf("Score: " .. score .. " | Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 0% | Rating: ???", -1950, 400, 1100, "center", 0, 3.5, 3.5)
 							end
 						else
 							if (math.floor((altScore / (noteCounter + missCounter)) / 3.5)) >= 100 then
-								love.graphics.printf("Score: " .. score .. " Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | PERFECT!!!", -1950, 400, 1100, "center", 0, 3.5, 3.5)
+								uitextf("Score: " .. score .. " Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: 100% | PERFECT!!!", -1950, 400, 1100, "center", 0, 3.5, 3.5)
 							else
-								love.graphics.printf("Score: " .. score .. " Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -1950, 400, 1100, "center", 0, 3.5, 3.5)
+								uitextf("Score: " .. score .. " Misses: " .. missCounter .. " | Hits: " .. hitCounter .. " | Accuracy: " .. convertedAcc .. " | Rating: " .. ratingText, -1950, 400, 1100, "center", 0, 3.5, 3.5)
 							end
 						end
 					end
 
 					if settings.sideJudgements then
-						love.graphics.printf(
+						uitextf(
 							"Sicks: " .. sicks ..
 							"\n\nGoods: " .. goods ..
 							"\n\nBads: " .. bads ..
@@ -2034,7 +2096,7 @@ return {
 	end,
 
 	drawDialogue = function()
-		love.graphics.printf(output, 150, 435, 200, "left", 0, 4.7, 4.7)
+		uitextf(output, 150, 435, 200, "left", 0, 4.7, 4.7)
 	end,
 
 	leave = function(self)

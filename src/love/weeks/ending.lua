@@ -4,6 +4,11 @@ return {
 		weeks:enter()
 		poemTransitionSwirl = love.filesystem.load("sprites/ending/poemTransition.lua")()
 		poemTransitionSwirl.sizeX, poemTransitionSwirl.sizeY = 2.2, 2.2
+		static = love.filesystem.load("sprites/ending/HomeStatic.lua")()
+		static.sizeX, static.sizeY = 1.5, 1.5
+		static:animate("anim", true)
+		TIMERS = {}
+		CAMTIMERS = {}
 
 		transparent = {
 			["BGSketch"] = 0,
@@ -11,7 +16,13 @@ return {
 			['backgroundsong2'] = 0,
 			["enemyStrum"] = 1,
 			["boyfriendStrum"] = 1,
-			["screen"] = 1
+			["screen"] = 1,
+			["enemysong3"] = 0,
+			["boyfriendsong3"] = 0,
+			["girlfriendsong3"] = 0,
+			["sayorisong3"] = 0,
+			["yurisong3"] = 0,
+			["static"] = 0
 		}
 		song = 1
 
@@ -30,19 +41,23 @@ return {
 			enemy3.x, enemy3.y = 25, 200
 			enemy3.sizeX, enemy3.sizeY = 3, 3
 		elseif song == 3 then
-			enemy = love.filesystem.load("sprites/characters/sayori.lua")()
-			enemy2 = love.filesystem.load("sprites/characters/sayoriSad.lua")()
-			enemy3 = love.filesystem.load("sprites/characters/sayoriHappyThoughts.lua")()
+			enemy = love.filesystem.load("sprites/characters/silhouette_nat.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/Doki_NatSad_Assets.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/Doki_Home_Nat_Assets.lua")()
 			enemy.x, enemy.y = -380, 270
 			enemy2.x, enemy2.y = -380, 380
 			enemy3.x, enemy3.y = -380, -30
-			sayo = love.filesystem.load("sprites/characters/sayori.lua")()
+			sayori = love.filesystem.load("sprites/characters/sayori.lua")()
 			yuri = love.filesystem.load("sprites/characters/yuri.lua")()
+			silhouette_gf = love.filesystem.load("sprites/characters/silhouette_gf.lua")()
+			silhouette_gf.x, silhouette_gf.y = 30, 210
 		end
+		showStatic = false
 	
 		girlfriend.x, girlfriend.y = 30, 210
 		
 		boyfriend.x, boyfriend.y = 260, 410
+		silhouette_bf.x, silhouette_bf.y = 260, 410
 		boyfriendSad.x, boyfriendSad.y = 260, 460
 		boyfriendHappy.x, boyfriendHappy.y = 260, 100
 
@@ -61,12 +76,20 @@ return {
 			"natsuki"
 		}
 
+		silhouettes = {
+			["enemy"] = {1,1,1},
+			["boyfriend"] = {1,1,1},
+			["girlfriend"] = {1,1,1},
+			["sayori"] = {1,1,1},
+			["yuri"] = {1,1,1}
+		}
+
 		-- stage stuffies --
 
 		-- Clubroom
 		clubroom = {
-			mainBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCBG"))),
-			farBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCfarBG"))),
+			mainBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCbg"))),
+			farBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCfarbg"))),
 			DesksFront = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DesksFront")))
 		}
 		clubroom.mainBG.sizeX, clubroom.mainBG.sizeY = 1.4, 1.4
@@ -78,9 +101,9 @@ return {
 			glitchFront = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/glitchfront1"))),
 			glitchBack = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/glitchback1")))
 		}
-		ruinedclub.mainBG.sizeX, ruinedclub.mainBG.sizeY = 1.4, 1.4
-		ruinedclub.glitchFront.sizeX, ruinedclub.glitchFront.sizeY = 1.4, 1.4
-		ruinedclub.glitchBack.sizeX, ruinedclub.glitchBack.sizeY = 1.4, 1.4
+		ruinedclub.mainBG.sizeX, ruinedclub.mainBG.sizeY = 1.15, 1.15
+		ruinedclub.glitchFront.sizeX, ruinedclub.glitchFront.sizeY = 1.15, 1.15
+		ruinedclub.glitchBack.sizeX, ruinedclub.glitchBack.sizeY = 1.15, 1.15
 		-- Clubroom2
 		clubroom2 = {
 			mainBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/BGRoom"))),
@@ -112,13 +135,14 @@ return {
 
 		-------------------
 
-		function camZoom(time, num)
+		function camZoom(time, num, name)
 			local time = time or 0.5
 			local num = num or 0.03
-			if camTween then
-				Timer.cancel(camTween)
+			local name = name or "default"
+			if CAMTIMERS[name] then
+				Timer.cancel(CAMTIMERS[name])
 			end
-			camTween = Timer.tween(
+			CAMTIMERS[name] = Timer.tween(
 				time,
 				cam,
 				{
@@ -131,13 +155,13 @@ return {
 		function changeVisiblity(name, value, time, wait)
 			local time = time or 0.5
 			local num = num or 0.03
-			if visTween then
-				Timer.cancel(visTween)
+			if TIMERS[name] then
+				Timer.cancel(TIMERS[name])
 			end
 			if wait then Timer.after(
 				wait,
 				function()
-					visTween = Timer.tween(
+					TIMERS[name] = Timer.tween(
 						time,
 						transparent,
 						{
@@ -229,12 +253,48 @@ return {
 		healthBarColorEnemy = {healthBarColours[song][1],healthBarColours[song][2],healthBarColours[song][3]}
 		healthBarColorPlayer = {49,176,209}
 		boyfriendIcon:animate("boyfriend", false)
-		closeUp = true
-				
+		closeUp = false
+		inWhite = false
+		love.graphics.setBackgroundColor(0,0,0)
 		
 		if song == 3 then
 			inst = love.audio.newSource("songs/ending/home/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/home/Voices.ogg", "stream")
+			clubroom = {
+				mainBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCbg-Grayscale"))),
+				farBG = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DDLCfarbg-Grayscale"))),
+				DesksFront = graphics.newImage(love.graphics.newImage(graphics.imagePath("ending/DesksFront-Grayscale")))
+			}
+			clubroom.mainBG.sizeX, clubroom.mainBG.sizeY = 1.4, 1.4
+			clubroom.farBG.sizeX, clubroom.farBG.sizeY = 1.4, 1.4
+			clubroom.DesksFront.sizeX, clubroom.DesksFront.sizeY = 1.4, 1.4
+			for i = 1, 3 do
+				silhouettes["enemy"][i] = 0
+				silhouettes["boyfriend"][i] = 0
+				silhouettes["girlfriend"][i] = 0
+				silhouettes["sayori"][i] = 0.35
+				silhouettes["yuri"][i] = 0.35
+			end
+			transparent["screen"] = 0
+			enemy = love.filesystem.load("sprites/characters/silhouette_nat.lua")()
+			enemy2 = love.filesystem.load("sprites/characters/Doki_NatSad_Assets.lua")()
+			enemy3 = love.filesystem.load("sprites/characters/Doki_Home_Nat_Assets.lua")()
+			enemy.x, enemy.y = -380, 270
+			enemy2.x, enemy2.y = -380, 380
+			enemy3.x, enemy3.y = -380, 380
+			sayori = love.filesystem.load("sprites/characters/silhouette_sayo.lua")()
+			yuri = love.filesystem.load("sprites/characters/silhouette_yuri.lua")()
+			silhouette_gf = love.filesystem.load("sprites/characters/silhouette_gf.lua")()
+			mGirlfriend = love.filesystem.load("sprites/characters/DDLCGF_Markov.lua")()
+			silhouette_gf.x, silhouette_gf.y = 30, 210
+			mGirlfriend.x, mGirlfriend.y = 30, 210
+			boyfriend = love.filesystem.load("sprites/characters/HAPPYBoyFriend_Assets.lua")()
+			boyfriend.x, boyfriend.y = 260, 410
+			sayori.x = -500
+			yuri.x = 500
+			transparent["enemy"] = 1
+			transparent["boyfriend"] = 1
+			boyfriendHappy.x, boyfriendHappy.y = 260, 410
 		elseif song == 2 then
 			inst = love.audio.newSource("songs/ending/markov/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/markov/Voices.ogg", "stream")
@@ -254,6 +314,9 @@ return {
 			transparent["enemy"] = 0
 			transparent["enemyStrum"] = 0
 			transparent["screen"] = 1
+			boyfriendIcon:animate("boyfriend sad", false)
+			healthBarColorPlayer = {82, 115, 145}
+			enemyIcon:animate("yuri closet", false)
 		else
 			inst = love.audio.newSource("songs/ending/stagnant/Inst.ogg", "stream")
 			voices = love.audio.newSource("songs/ending/stagnant/Voices.ogg", "stream")
@@ -281,6 +344,11 @@ return {
 		weeks:update(dt)
 		poemTransitionSwirl:update(dt)
 		paperBG:update(dt)
+		static:update(dt)
+		if song == 3 then
+			sayori:update(dt)
+			yuri:update(dt)
+		end
 		clubroom2.bgSketch:update(dt)
 
         if musicTime <= 100 then -- the camera is broken for some reason and I have no idea why
@@ -294,9 +362,12 @@ return {
 				poemTransitionSwirl:animate("anim", false)
 			elseif musicTime >= 193666 and musicTime <= 193516 then
 				poemTransitionSwirl:animate("anim", false)
-			elseif musicTime >= 221000 and musicTime <= 221000+50 then
+			elseif musicTime >= 220416 and musicTime <= 220466 then
 				poemTransitionSwirl:animate("anim", false)
 				finalTransition = true
+				if not poemTransitionSwirl:isAnimated() then
+					poemTransitionSwirl:animate("animFinal", true)
+				end
 			end
 			if musicTime >= 87999 and musicTime <= 87999+50 then -- cam zooms
 				camZoom(0.35, 0.25)
@@ -452,31 +523,259 @@ return {
 				changeVisiblity("boyfriendStrum",0, 0.2, 0)
 			end
 			if musicTime >= 227227 and musicTime <= 227277 then
-				weeks:safeAnimate(enemy4, "dies", 2, false, 30)
-				if ballsFinish then
-					Timer.cancel(ballsFinish)
-				end
-				Timer.after(
-					0.6,
-					function()
-						ballsFinish = Timer.tween(
-							1.86,
-							enemy,
-							{
-								x = enemy.x + 600
-							},
-							"out-quad"
-						)
-					end
-				)
-				
+				weeks:safeAnimate(enemy4, "dies", false, 2, 30)
 			end
 			if closeUp then 
 				cam.sizeX, cam.sizeY = 0.95, 0.95 
 				cam.x, cam.y = -boyfriend.x + 100, -boyfriend.y + 150
 			end
-		else
+			if enemy4:getAnimName() == "dies" and not enemy4:isAnimated() then
+				transparent["enemysong2"] = 0
+			end
+		elseif song == 3 then
 			-- Home
+			if musicTime <= 50 then
+				transparent["screen"] = 0
+				transparent["enemyStrum"] = 0
+				transparent["boyfriendStrum"] = 0
+			end
+			if musicTime >= 3600 and musicTime <= 3670 then
+				changeVisiblity("screen", 1, 5, 0)
+			end
+			if musicTime >= 9075 and musicTime <= 9155 then
+				changeVisiblity("enemyStrum", 1, 1, 0)
+			end
+			if musicTime >= 9600 and musicTime <= 9670 then
+				changeVisiblity("enemysong3", 1, 0.7, 0)
+			end
+			if musicTime >= 11400 and musicTime <= 11470 then
+				changeVisiblity("boyfriendStrum", 1, 1, 0)
+			end
+			if musicTime >= 12000 and musicTime <= 12070 then
+				changeVisiblity("boyfriendsong3", 1, 0.7, 0)
+			end
+			if musicTime >= 19200 and musicTime <= 19270 then
+				changeVisiblity("girlfriendsong3", 1, 0.7, 0)
+			end
+			if musicTime >= 19275 and musicTime <= 19345 then -- baka doodles
+			end
+			if musicTime >= 28800 and musicTime <= 28900 then
+				camZoom(5, 0.7)
+			end
+			if musicTime >= 33600 and musicTime <= 33670 then
+				-- doodles
+				changeVisiblity("enemyStrum", 0, 1, 0)
+				changeVisiblity("boyfriendStrum", 0, 1, 0)
+				changeVisiblity("boyfriendsong3", 0, 1, 0)
+				changeVisiblity("girlfriendsong3", 0, 1, 0)
+				changeVisiblity("enemysong3", 0, 1, 0)
+			end
+			if musicTime >= 35325 and musicTime <= 35395 then
+				showStatic = true
+				changeVisiblity("static", 0.2, 1.8, 0)
+			end
+			if musicTime >= 37200 and musicTime <= 37270 then
+				changeVisiblity("static", 0.2, 0.25, 0)
+				cam.sizeX, cam.sizeY = 0.95, 0.95
+				changeVisiblity("enemyStrum", 1, 0, 0)
+				changeVisiblity("boyfriendStrum", 1, 0, 0)
+				changeVisiblity("boyfriendsong3", 1, 0, 0)
+				changeVisiblity("girlfriendsong3", 1, 0, 0)
+				changeVisiblity("enemysong3", 1, 0, 0)
+			end
+			if musicTime >= 56400 and musicTime <= 56470 then
+				weeks:safeAnimate(enemy2, "eyes", false, 2)
+				camZoom(0.2, 0.55)
+			end
+			if musicTime >= 114000 and musicTime <= 114070 then
+				if camBallsTween then
+					Timer.cancel(camBallsTween)
+				end
+				camBallsTween = Timer.tween(
+					0.5,
+					cam,
+					{
+						x = mGirlfriend.x,
+						y = mGirlfriend.y - 70
+					},
+					"out-quad"
+				)
+				mGirlfriend:animate("end", false)
+			end
+			if musicTime >= 116400 and musicTime <= 116470 then
+				mGirlfriend:animate("home", false)
+			end
+
+			if musicTime >= 180750 and musicTime <= 180820 then
+				changeVisiblity("sayorisong3", 1, 0.7, 0)
+			end
+			if musicTime >= 195150 and musicTime <= 195220 then
+				changeVisiblity("yurisong3", 1, 0.7, 0)
+			end
+			------------------------------------  Hard coded extra character animations ------------------------------------
+			-- Sayori --
+			if musicTime >= 175000 then
+				if not sayori:isAnimated() then
+					sayori:animate("idle")
+				end
+				if musicTime >= 181200 and musicTime <= 181950 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 182025 and musicTime <= 182925 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 183000 and musicTime <= 183525 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 183600 and musicTime <= 183600 + 900 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 184500 and musicTime <= 184500 + 825 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 185400 and musicTime <= 185925 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 186000 and musicTime <= 186000 + 1125 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 187200 and musicTime <= 187200 + 1125 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 188400 and musicTime <= 188400 + 1125 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 189600 and musicTime <= 189600 + 1125 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 190800 and musicTime <= 190800 + 1125 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 192000 and musicTime <= 192000 + 1125 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 193200 and musicTime <= 193200+ 1125 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 194400 and musicTime <= 194400+ 1125 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 198000 and musicTime <= 198000 + 825 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 198900 and musicTime <= 198900 + 1425 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 200400 and musicTime <= 200400 + 2325 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 202800 and musicTime <= 202800 + 2325 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 205200 and musicTime <= 205725 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 205800 and musicTime <= 205800 + 525 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 206400 and musicTime <= 206400 + 525 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 207000 and musicTime <= 207525 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 207600 and musicTime <= 207600 + 525 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 208200 and musicTime <= 208725 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 208800 and musicTime <= 208800 + 225 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 209100 and musicTime <= 209250 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 209325 and musicTime <= 209925 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 210825 and musicTime <= 210875 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 210525 and musicTime <= 210575 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 210300 and musicTime <= 210350 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 210000 and musicTime <= 210050 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 211425 and musicTime <= 211475 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 211200 and musicTime <= 211250 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 211800 and musicTime <= 211850 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 212100 and musicTime <= 212150 then
+					sayori:nanimate("up")
+				end
+				if musicTime >= 212400 and musicTime <= 212550 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 213000 and musicTime <= 213150 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 212700 and musicTime <= 212850 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 213300 and musicTime <= 213450 then
+					sayori:nanimate("down")
+				end
+				if musicTime >= 213600 and musicTime <= 213750 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 213900 and musicTime <= 214050 then
+					sayori:nanimate("right")
+				end
+				if musicTime >= 214200 and musicTime <= 214050 then
+					sayori:nanimate("left")
+				end
+				if musicTime >= 214500 and musicTime <= 214650 then
+					sayori:nanimate("up")
+				end
+				-- Yuri --
+				if not yuri:isAnimated() then
+					yuri:animate("idle")
+				end
+				if musicTime >= 195600 and musicTime <= 195600 then
+					yuri:nanimate("left")
+				end
+				if musicTime >= 196500 and musicTime <= 196550 then
+					yuri:nanimate("left")
+				end
+				if musicTime >= 195900 and musicTime <= 195950 then
+					yuri:nanimate("up")
+				end
+				if musicTime >= 196200 and musicTime <= 196250 then
+					yuri:nanimate("down")
+				end
+				if musicTime >= 197100 and musicTime <= 197150 then
+					yuri:nanimate("down")
+				end
+				if musicTime >= 196800 and musicTime <= 196850 then
+					yuri:nanimate("right")
+				end
+				if musicTime >= 197400 and musicTime <= 197450 then
+					yuri:nanimate("left")
+				end
+				if musicTime >= 197700 and musicTime <= 197750 then
+					yuri:nanimate("down")
+				end
+			end
         end
 
 		if health >= 80 then
@@ -511,6 +810,13 @@ return {
 			elseif enemyIcon:getAnimName() == enemyNames[song].." i2 losing" then
 				enemyIcon:animate(enemyNames[song] .. " i2", false)
 			end
+		end
+		if input:pressed("BALLS") then
+			inst:stop()
+			voices:stop()
+			song = song + 1
+
+			self:load()
 		end
 
 		if not (countingDown or graphics.isFading()) and not (inst:isPlaying() and voices:isPlaying()) and not paused then
@@ -550,9 +856,36 @@ return {
 			love.graphics.push()
 				love.graphics.translate(cam.x * 0.9, cam.y * 0.9)
 				if not inWhite then
-					if song == 1 and (musicTime <= 23999) or song == 1 and (musicTime >= 45333 and musicTime <= 66666) then
-						clubroom.farBG:draw()
-						clubroom.mainBG:draw()
+					if song == 1 then
+						if (musicTime <= 23999) or song == 1 and (musicTime >= 45333 and musicTime <= 66666) then
+							clubroom.farBG:draw()
+							clubroom.mainBG:draw()
+						end
+					elseif song == 3 then
+						graphics.setColor(1,1,1,transparent["screen"])
+						if musicTime <= 33600 then
+							clubroom.farBG:draw()
+							clubroom.mainBG:draw()
+						elseif musicTime >= 33600 and musicTime <= 37200 then
+							paperBG:draw()
+						elseif musicTime >= 37200 and musicTime <= 135600 then
+							clubroom2.sky:draw()
+							clubroom2.mainBG:draw()
+						elseif musicTime >= 135600 and musicTime <= 154800 then
+							static:draw()
+							ruinedclub.glitchBack:draw()
+							ruinedclub.mainBG:draw()
+							ruinedclub.glitchFront:draw()
+						elseif musicTime >= 154800 and musicTime <= 164400 then
+							notepad.notepad:draw()
+							notepad.notepadOverlay:draw()
+						elseif musicTime >= 164400 and musicTime <= 176400 then
+							static:draw()
+							ruinedclub.glitchBack:draw()
+							ruinedclub.mainBG:draw()
+							ruinedclub.glitchFront:draw()
+						end
+						graphics.setColor(1,1,1)
 					end
 					if sadTime then
 						clubroom2.sky:draw()
@@ -587,6 +920,15 @@ return {
 						if not dontDrawBF then
 							girlfriend:draw()
 						end
+					elseif song == 3 then
+						if musicTime <= 33600 or musicTime >= 176400 then
+							graphics.setColor(silhouettes["girlfriend"][1], silhouettes["girlfriend"][2], silhouettes["girlfriend"][3], transparent["girlfriendsong3"])
+							silhouette_gf:draw()
+							graphics.setColor(1,1,1)
+						end
+						if (musicTime >= 37200 and musicTime <= 154800) or (musicTime >= 164400 and musicTime <= 176400)  then
+							mGirlfriend:draw()
+						end
 					end
 				end
 			love.graphics.pop()
@@ -614,11 +956,12 @@ return {
 						closeUp = true
 						graphics.setColor(1,1,1,transparent["enemysong2"])
 						enemy3:draw()
-						love.graphics.setColor(1,1,1,1)
+						graphics.setColor(1,1,1,1)
 						dontDrawBF = true
 						sadTime = false
 					end
 					if (musicTime >= 44486 and musicTime <= 46027) or (musicTime >= 85927 and musicTime <= 125227) or (musicTime >= 182452 and musicTime <= 216427) or (musicTime >= 216727 and musicTime <= 217627) or (musicTime >= 217927 and musicTime <= 218827) or (musicTime >= 219127 and musicTime <= 220027) or (musicTime >= 220327 and musicTime <= 221227) or (musicTime >= 221527 and musicTime <= 222427) or (musicTime >= 222727 and musicTime <= 223627) or (musicTime >= 223927 and musicTime <= 224827) then
+						enemyIcon:animate("yuri glitch", false)
 						closeUp = true
 						enemy2:draw()
 						dontDrawBF = true
@@ -652,10 +995,70 @@ return {
 					end
 				-- Home
 				elseif song == 3 then
-					enemy:draw()
-					boyfriend:draw()
-					sayo:draw()
-					yuri:draw()
+					if musicTime <= 33600 or musicTime >= 176400 then
+						if musicTime >= 176400 then
+							cam.sizeX, cam.sizeY = 0.95, 0.95
+						end
+						-- sillhouets
+						graphics.setColor(silhouettes["sayori"][1], silhouettes["sayori"][2], silhouettes["sayori"][3], transparent["sayorisong3"])
+						sayori:draw()
+						graphics.setColor(silhouettes["yuri"][1], silhouettes["yuri"][2], silhouettes["yuri"][3], transparent["yurisong3"])
+						yuri:draw()
+						graphics.setColor(silhouettes["enemy"][1], silhouettes["enemy"][2], silhouettes["enemy"][3], transparent["enemysong3"])
+						enemy:draw()
+						graphics.setColor(silhouettes["boyfriend"][1], silhouettes["boyfriend"][2], silhouettes["boyfriend"][3], transparent["boyfriendsong3"])
+						silhouette_bf:draw()
+						graphics.setColor(1,1,1)
+					end		
+					if musicTime >=	37200 and musicTime <= 135600 then
+						graphics.setColor(1,1,1,transparent["enemy"])
+						if musicTime >= 58800 and musicTime <= 97275 then 
+							if BALLSTWEEN then
+								Timer.cancel(BALLSTWEEN)
+							else
+								enemy2:animate("idle", false)
+							end
+							BALLSTWEEN = Timer.tween(
+								0.35,
+								enemy3,
+								{
+									x = 25
+								},
+								"out-quad"
+							)		
+							for i = 1, 3 do
+								silhouettes["enemy"][i] = 0.85
+								silhouettes["boyfriend"][i] = 0.85
+								silhouettes["girlfriend"][i] = 0.35
+								silhouettes["sayori"][i] = 0.35
+								silhouettes["yuri"][i] = 0.35
+							end
+						elseif musicTime <= 116400 and musicTime >= 97275 then 
+							enemy2:draw()
+						end
+						if musicTime <= 58800 and musicTime <= 116400 then
+							enemy2:draw()
+						elseif musicTime >= 58800 and musicTime <= 97275 then
+							enemy3:draw()
+						end
+						if musicTime <= 116400 then
+							boyfriendSad:draw()
+						else
+							boyfriend:draw()
+						end
+					end
+					if musicTime >= 116400 and musicTime <= 154800 then
+						enemy3:draw()
+					end
+					graphics.setColor(1,1,1,transparent["boyfriend"])
+					if musicTime >= 135600 and musicTime <= 154800 then
+						enemy3:draw()
+						boyfriend:draw()
+					end
+					if musicTime >= 154800 and musicTime <= 164400 then
+						transparent["static"] = 0
+						boyfriendHappy:draw()
+					end
 				end
 
 			love.graphics.pop()
@@ -671,6 +1074,10 @@ return {
 			weeks:drawRating(0.9)
 			if poemTransitionSwirl:isAnimated() and musicTime >= 10000 then
 				poemTransitionSwirl:draw()
+			end
+			if showStatic then
+				graphics.setColor(1,1,1,transparent["static"])
+				static:draw()
 			end
 		love.graphics.pop()
 

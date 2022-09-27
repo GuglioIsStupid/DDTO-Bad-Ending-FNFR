@@ -246,6 +246,21 @@ return {
 
 				isAnimated = true
 			end,
+			nanimate = function(self, animName, loopAnim)
+				if (not self:isAnimated() and self:getAnimName() == animName) or (animName ~= self:getAnimName()) then
+					anim.name = animName
+					anim.start = anims[animName].start
+					anim.stop = anims[animName].stop
+					anim.speed = anims[animName].speed
+					anim.offsetX = anims[animName].offsetX
+					anim.offsetY = anims[animName].offsetY
+
+					frame = anim.start
+					isLooped = loopAnim
+
+					isAnimated = true
+				end
+			end,
 			getAnims = function(self)
 				return anims
 			end,

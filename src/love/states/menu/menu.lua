@@ -62,7 +62,7 @@ return {
 			false
 		}
 
-		bg = graphics.newImage(love.graphics.newImage(graphics.imagePath("menu/scrolling_bg")))
+		bg = graphics.newImage(love.graphics.newImage(graphics.imagePath("menu/scrolling_BG")))
 		bg.sizeX, bg.sizeY = 2.2,2.2
 
 		doingBPS = false

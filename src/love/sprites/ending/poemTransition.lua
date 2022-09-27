@@ -38,7 +38,8 @@ return graphics.newSprite(
 		{x = 1300, y = 740, width = 1280, height = 720, offsetX = 0, offsetY = 0, offsetWidth = 0, offsetHeight = 0} -- 34: poemtransition0033
 	},
 	{
-		["anim"] = {start = 1, stop = 34, speed = 24, offsetX = 0, offsetY = 0}
+		["anim"] = {start = 1, stop = 34, speed = 24, offsetX = 0, offsetY = 0},
+		["animFinal"] = {start = 30, stop = 34, speed = 24, offsetX = 0, offsetY = 0}
 	},
 	"anim",
 	false

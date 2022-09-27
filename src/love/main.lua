@@ -25,7 +25,58 @@ love.graphics.color = {}
 color = {}
 
 volFade = 0
-
+function HSL(h, s, l, a)
+	if s<=0 then return l,l,l,a end
+	h, s, l = h*6, s, l
+	local c = (1-math.abs(2*l-1))*s
+	local x = (1-math.abs(h%2-1))*c
+	local m,r,g,b = (l-.5*c), 0,0,0
+	if h < 1     then r,g,b = c,x,0
+	elseif h < 2 then r,g,b = x,c,0
+	elseif h < 3 then r,g,b = 0,c,x
+	elseif h < 4 then r,g,b = 0,x,c
+	elseif h < 5 then r,g,b = x,0,c
+	else              r,g,b = c,0,x
+	end return r+m, g+m, b+m, a
+end
+function uitextf(text,x,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+	local x = x or 0
+	local y = y or 0
+	local r = r or 0
+	local limit = limit or 750
+	local align = align or "left"
+	local sx = sx or 1
+	local sy = sy or 1
+	local ox = ox or 0
+	local oy = oy or 0
+	local kx = kx or 0
+	local ky = ky or 0
+	graphics.setColor(0,0,0)
+	love.graphics.printf(text,x-2,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+	love.graphics.printf(text,x+2,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+	love.graphics.printf(text,x,y-2,limit,align,r,sx,sy,ox,oy,kx,ky)
+	love.graphics.printf(text,x,y+2,limit,align,r,sx,sy,ox,oy,kx,ky)
+	graphics.setColor(1,1,1)
+    love.graphics.printf(text,x,y,limit,align,r,sx,sy,ox,oy,kx,ky)
+end
+function uitext(text,x,y,r,sx,sy,ox,oy,kx,ky)
+	local x = x or 0
+	local y = y or 0
+	local r = r or 0
+	local sx = sx or 1
+	local sy = sy or 1
+	local ox = ox or 0
+	local oy = oy or 0
+	local kx = kx or 0
+	local ky = ky or 0
+	graphics.setColor(0,0,0)
+	love.graphics.print(text,x-2,y,r,sx,sy,a,ox,oy,kx,ky)
+	love.graphics.print(text,x+2,y,r,sx,sy,a,ox,oy,kx,ky)
+	love.graphics.print(text,x,y-2,r,sx,sy,a,ox,oy,kx,ky)
+	love.graphics.print(text,x,y+2,r,sx,sy,a,ox,oy,kx,ky)
+	graphics.setColor(1,1,1)
+    love.graphics.print(text,x,y,r,sx,sy,a,ox,oy,kx,ky)
+end
 function love.load()
 	local curOS = love.system.getOS()
 
