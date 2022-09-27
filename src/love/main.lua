@@ -326,7 +326,9 @@ function love.load()
 	spriteTimers = {
 		0, -- Girlfriend
 		0, -- Enemy
-		0 -- Boyfriend
+		0, -- Boyfriend
+		0, -- Sayori
+		0, -- Yuri
 	}
 
 	storyMode = false
