@@ -358,11 +358,11 @@ return {
 
         if song == 1 then
 			-- Stagnant
-			if musicTime >= 108333 and musicTime <= 108383 then -- poem transitions
+			if musicTime >= 106333 and musicTime <= 108383 then -- poem transitions
 				poemTransitionSwirl:animate("anim", false)
-			elseif musicTime >= 193666 and musicTime <= 193516 then
+			elseif musicTime >= 193266 and musicTime <= 193516 then
 				poemTransitionSwirl:animate("anim", false)
-			elseif musicTime >= 220416 and musicTime <= 220466 then
+			elseif musicTime >= 220116 and musicTime <= 220466 then
 				poemTransitionSwirl:animate("anim", false)
 				finalTransition = true
 				if not poemTransitionSwirl:isAnimated() then

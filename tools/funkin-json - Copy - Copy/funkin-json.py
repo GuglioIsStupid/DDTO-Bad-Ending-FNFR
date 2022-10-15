@@ -19,7 +19,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------------------
 
-# Modified to remove psych events by Guglio
+# Modified for better note stuffies by GuglioIsStupid#8008
 
 import json
 import os
